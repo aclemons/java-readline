@@ -137,8 +137,8 @@ public class Readline {
      @return The string the user entered
   */
 
-  public static String readline(String prompt)
-                            throws IOException, UnsupportedEncodingException {
+  public static String readline(String prompt) throws EOFException, 
+                                    IOException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       return readlineImpl(prompt);
     else {
