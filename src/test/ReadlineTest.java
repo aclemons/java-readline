@@ -52,7 +52,7 @@ public class ReadlineTest {
 
   public static void main(String[] args) {
     String line;
-    Readline.setThrowErrorOnUnsupportedMethod(true);
+    Readline.setThrowExceptionOnUnsupportedMethod(true);
     Readline.load(ReadlineLibrary.GnuReadline);
     Readline.initReadline("ReadLineTest"); // init, set app name, read inputrc
 
