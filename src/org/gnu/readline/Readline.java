@@ -25,8 +25,8 @@ import java.io.*;
 
 /**
  This class implements basic functionality of the GNU-readline interface. It
- uses native method calls and might therefore not be portable to other 
- platforms.
+ uses native method calls if available, otherwise it defaults to normal
+ I/O using a BufferedReader. 
 
  @version $Revision$
  @author  $Author$
@@ -34,11 +34,43 @@ import java.io.*;
 
 public class Readline {
   
+  /**
+     The currently defined ReadlineCompleter.
+  */
+
   private static ReadlineCompleter iCompleter = null;
 
-  static {
-    System.loadLibrary("JavaReadline");
+
+  /**
+     The currently implementing backing library.
+  */
+
+  private static ReadlineLibrary iLib = ReadlineLibrary.PureJava;
+
+  /**
+     The BufferedReader for the fallback solution.
+  */
+
+  private static BufferedReader iReader = null;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Load an implementing backing library.
+  */
+
+  public static final void load(ReadlineLibrary lib) {
+    if (lib == iLib)     // ok, since objects are immutable
+      return;
+    if (lib == ReadlineLibrary.PureJava) {
+      iLib = lib;
+      return;
+    }
+    System.loadLibrary(lib.getName()); // might throw UnsatisfiedLinkError
+    iLib = lib;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Initialize the GNU-Readline library. This will also set the
@@ -50,7 +82,12 @@ public class Readline {
      @param applicationName Name of application in initialization file
   */
 
-  public native static void initReadline(String applicationName);
+  public static void initReadline(String applicationName) {
+    if (iLib != ReadlineLibrary.PureJava)
+      initReadlineImpl(applicationName);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Display a prompt on standard output and read a string from
@@ -60,8 +97,20 @@ public class Readline {
      @return The string the user entered
   */
 
-  public native static String readline(String prompt)
-                              throws EOFException, UnsupportedEncodingException;
+  public static String readline(String prompt)
+                            throws IOException, UnsupportedEncodingException {
+    if (iLib != ReadlineLibrary.PureJava)
+      return readlineImpl(prompt);
+    else {
+      System.out.print(prompt);
+      if (iReader == null)
+	iReader = new BufferedReader(new InputStreamReader(System.in));
+      String line = iReader.readLine();
+      return line;
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Read keybindings and variable assignments from a file. This method is a
@@ -72,7 +121,12 @@ public class Readline {
      @return void
   */
 
-  public native static void readInitFile(String filename) throws IOException;
+  public static void readInitFile(String filename) throws IOException {
+    if (iLib != ReadlineLibrary.PureJava)
+      readInitFileImpl(filename);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Parse argument string as if it had been read from `inputrc' file
@@ -82,15 +136,28 @@ public class Readline {
      @return boolean False in case of error
   */
 
-  public native static boolean parseAndBind(String line);
+  public static boolean parseAndBind(String line) {
+    if (iLib != ReadlineLibrary.PureJava)
+      return parseAndBindImpl(line);
+    else
+      return true;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Reads a history file into memory
        @param filename Name of history file to read
      */
 
-  public native static void readHistoryFile(String filename)
-                              throws EOFException, UnsupportedEncodingException;
+  public static void readHistoryFile(String filename)
+                              throws EOFException, UnsupportedEncodingException {
+    if (iLib != ReadlineLibrary.PureJava)
+      readHistoryFileImpl(filename);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Writes a history file to disc
@@ -98,8 +165,14 @@ public class Readline {
      @param filename Name of history file to write
   */
 
-  public native static void writeHistoryFile(String filename)
-                              throws EOFException, UnsupportedEncodingException;
+  public static void writeHistoryFile(String filename)
+                              throws EOFException, UnsupportedEncodingException {
+    if (iLib != ReadlineLibrary.PureJava)
+      writeHistoryFileImpl(filename);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Set your completer function.
@@ -108,9 +181,13 @@ public class Readline {
   */
     
   public static void setCompleter(ReadlineCompleter rlc) {
-    iCompleter = rlc;
-    installCompleter(rlc);
+    if (iLib != ReadlineLibrary.PureJava) {
+      iCompleter = rlc;
+      setCompleterImpl(rlc);
+    }
   }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Query current completer function.
@@ -122,20 +199,20 @@ public class Readline {
     return iCompleter;
   }
 
-  /**
-     Installs your completer function.
+  /////////////////////////////////////////////////////////////////////////////
 
-     @param readlinecompleter An object which implements the 
-     ReadlineCompleter interface
-  */
-    
-  private native static void installCompleter(ReadlineCompleter rlc);
-    
   /**
      Query word break characters.
   */
     
-  public native static String getWordBreakCharacters();
+  public static String getWordBreakCharacters() {
+    if (iLib != ReadlineLibrary.PureJava)
+      return getWordBreakCharactersImpl();
+    else
+      return null;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Set word break characters.
@@ -143,8 +220,108 @@ public class Readline {
      @param wordBreakCharacters A string of word break characters
   */
     
-  public native static void 
+  public static void 
     setWordBreakCharacters(String wordBreakCharacters)
-                              throws UnsupportedEncodingException;
+                              throws UnsupportedEncodingException {
+    if (iLib != ReadlineLibrary.PureJava)
+      setWordBreakCharactersImpl(wordBreakCharacters);
+  }
 
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of initReadline()
+
+     @see org.gnu.readline.Readline#initReadline(String applicationName)
+  */
+
+  private native static void initReadlineImpl(String applicationName);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of readline()
+
+     @see org.gnu.readline.Readline#readline(String prompt)
+  */
+
+  private native static String readlineImpl(String prompt)
+                              throws EOFException, UnsupportedEncodingException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of readInitFile(String filename)
+
+     @see org.gnu.readline.Readline#readInitFile(String filename)
+  */
+
+  private native static void readInitFileImpl(String filename)
+                                                            throws IOException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of parseAndBind(String line)
+
+     @see org.gnu.readline.Readline#parseAndBind(String line)
+  */
+
+  private native static boolean parseAndBindImpl(String line);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of readHistoryFile(String filename)
+
+     @see org.gnu.readline.Readline#readHistoryFile(String filename)
+  */
+
+  private native static void readHistoryFileImpl(String filename)
+                              throws EOFException, UnsupportedEncodingException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of writeHistoryFile(String filename)
+
+     @see org.gnu.readline.Readline#writeHistoryFile(String filename)
+  */
+
+  private native static void writeHistoryFileImpl(String filename)
+                              throws EOFException, UnsupportedEncodingException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of setCompleter(ReadlineCompleter rlc)
+
+     @see org.gnu.readline.Readline#setCompleter(ReadlineCompleter rlc)
+  */
+    
+  private native static void setCompleterImpl(ReadlineCompleter rlc);
+    
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getWordBreakCharacters()
+
+     @see org.gnu.readline.Readline#getWordBreakCharacters()
+  */
+
+  private native static String getWordBreakCharactersImpl();
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of setWordBreakCharacters()
+
+     @see 
+   org.gnu.readline.Readline#setWordBreakCharacters(String wordBreakCharacters)
+  */
+
+  private native static void 
+    setWordBreakCharactersImpl(String wordBreakCharacters)
+                              throws UnsupportedEncodingException;
 }
