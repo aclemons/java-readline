@@ -1,0 +1,8 @@
+- Add support for the following readline functions/variables:
+  * rl_parse_and_bind
+  * rl_read_init_file
+  * rl_initialize
+  * rl_library_version
+  * custom completers (if possible)
+
+- Support characters with 8'th bit set
