@@ -73,20 +73,758 @@ import java.util.*;
 public class Readline {
 
   /**
-     Constant to access the word-break-characters with
+     Constant to access rl_library_version using
      <code>getVar()</code> or <code>setVar()</code>.
 
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
-	  <li>Editline</li>
         </ul>
      </p>     
   */
   
-  public final static ReadlineConstString WORD_BREAK_CHARS = 
+  public final static ReadlineConstString RL_LIBRARY_VERSION = 
     new ReadlineConstString(0, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline,ReadlineLibrary.Editline});
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_readline_name using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_READLINE_NAME = 
+    new ReadlineConstString(1, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_prompt using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_PROMPT = 
+    new ReadlineConstString(2, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_line_buffer using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_LINE_BUFFER = 
+    new ReadlineConstString(3, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_terminal_name using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_TERMINAL_NAME = 
+    new ReadlineConstString(4, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_executing_macro using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_EXECUTING_MACRO =
+    new ReadlineConstString(5, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_basic_word_break_characters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_BASIC_WORD_BREAK_CHARACTERS =
+    new ReadlineConstString(6, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completer_word_break_characters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_COMPLETER_WORD_BREAK_CHARACTERS = 
+    new ReadlineConstString(7, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completer_quote_characters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_COMPLETER_QUOTE_CHARACTERS = 
+    new ReadlineConstString(8, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_basic_quote_characters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_BASIC_QUOTE_CHARACTERS = 
+    new ReadlineConstString(9, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_filename_quote_characters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_FILENAME_QUOTE_CHARACTERS = 
+    new ReadlineConstString(10, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_special_prefixes using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString RL_SPECIAL_PREFIXES = 
+    new ReadlineConstString(11, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_word_delimiters using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString HISTORY_WORD_DELIMITERS = 
+    new ReadlineConstString(12, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+  /**
+     Constant to access history_no_expand_chars using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString HISTORY_NO_EXPAND_CHARS = 
+    new ReadlineConstString(13, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_search_delimiter_chars using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstString HISTORY_SEARCH_DELIMITERS = 
+    new ReadlineConstString(14, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_readline_version using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_READLINE_VERSION = 
+    new ReadlineConstInt(0, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_gnu_readline_p using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_GNU_READLINE_P = 
+    new ReadlineConstInt(1, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_readline_state using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_READLINE_STATE = 
+    new ReadlineConstInt(2, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_editing_mode using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_EDITING_MODE = 
+    new ReadlineConstInt(3, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_insert_mode using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_INSERT_MODE = 
+    new ReadlineConstInt(4, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_point using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_POINT = 
+    new ReadlineConstInt(5, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_end using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_END = 
+    new ReadlineConstInt(6, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_mark using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_MARK = 
+    new ReadlineConstInt(7, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_done using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_DONE = 
+    new ReadlineConstInt(8, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_pending_input using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_PENDING_INPUT = 
+    new ReadlineConstInt(9, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_dispatching using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_DISPATCHING = 
+    new ReadlineConstInt(10, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_explicit_arg using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_EXPLICIT_ARG = 
+    new ReadlineConstInt(11, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_numeric_arg using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_NUMERIC_ARG = 
+    new ReadlineConstInt(12, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_erase_empty_line using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_ERASE_EMPTY_LINE = 
+    new ReadlineConstInt(13, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_already_prompted using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_ALREADY_PROMPTED = 
+    new ReadlineConstInt(14, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_num_chars_to_read using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_NUM_CHARS_TO_READ = 
+    new ReadlineConstInt(15, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_catch_signals using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_CATCH_SIGNALS = 
+    new ReadlineConstInt(16, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_catch_sigwinch using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_CATCH_SIGWINCH = 
+    new ReadlineConstInt(17, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_filename_completion_desired using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_FILENAME_COMPLETION_DESIRED = 
+    new ReadlineConstInt(18, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_filename_quoting_desired using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_FILENAME_QUOTING_DESIRED = 
+    new ReadlineConstInt(19, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_attempted_completion_over using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_ATTEMPTED_COMPLETION_OVER = 
+    new ReadlineConstInt(20, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completion_type using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_COMPLETION_TYPE = 
+    new ReadlineConstInt(21, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completion_append_character using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_COMPLETION_APPEND_CHARACTER = 
+    new ReadlineConstInt(22, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completion_suppress_append using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_COMPLETION_SUPPRESS_APPEND = 
+    new ReadlineConstInt(23, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completion_query_items using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_COMPLETION_QUERY_ITEMS = 
+    new ReadlineConstInt(24, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_completion_mark_symlink_dirs using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_COMPLETION_MARK_SYMLINK_DIRS = 
+    new ReadlineConstInt(25, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_ignore_completion_duplicates using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_IGNORE_COMPLETION_DUPLICATES = 
+    new ReadlineConstInt(26, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access rl_inhibit_completion using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt RL_INHIBIT_COMPLETION = 
+    new ReadlineConstInt(27, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_base using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt HISTORY_BASE = 
+    new ReadlineConstInt(28, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_length using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt HISTORY_LENGTH = 
+    new ReadlineConstInt(29, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_max_entries using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt HISTORY_MAX_ENTRIES = 
+    new ReadlineConstInt(30, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+  /**
+     Constant to access history_quotes_inhibit_expansion using
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>     
+  */
+  
+  public final static ReadlineConstInt HISTORY_QUOTES_EXPANSION = 
+    new ReadlineConstInt(31, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline});
+
+
+
+  /* ----------------------------------------------------------------------- */
 
   /**
      The currently defined ReadlineCompleter.
