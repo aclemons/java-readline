@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<!--
+  $Revision$
+  $Author$
+-->
+
+<HTML>
+  <HEAD>
+    <TITLE>Java-Readline</TITLE>
+  </HEAD>
+  <BODY bgcolor=#FCC309>
+
+    <H1 align=center>Java-Readline</H1>
+
+    <hr>
+    <H2>Introduction</H2>
+
+    <p>Originally a private project with the focus on learning about
+      the Java Native Interface (JNI), Java-Readline has turned into a
+      collaborative work of many contributers. It is now hosted on
+      Sourceforge. For details about the project, please visit the
+      <a href="http://sourceforge.net/projects/java-readline/">main
+	project page</a>.
+
+    <hr>
+    <H2>Description</H2>
+
+    <p>Java-Readline is a port of GNU Readline for Java. Or, to be
+      more precise, it is a JNI-wrapper to Readline. It is distributed
+      under the LGPL.
+
+    <p><strong>Although Java-Readline is distributed under the LGPL, the
+      underlying Readline library is GPL code. The consequence is,
+      that any program linking with Java-Readline+Readline, will fall
+      under the GPL.</strong>
+
+    <p>There is a Readline replacement called Editline with a more
+      liberal license. Starting with version 0.6, you 
+      have the choice of linking against Editline. This version also
+      features a fallback solution (System.in) for platforms without
+      Readline or Editline support, making your programs portable
+      again.
+
+    <P>The code should compile for every platform supporting the readline,
+      history and termcap libraries. Platforms known to work:
+      <ul>
+        <li>Linux (various x86-distributions)</li>
+        <li>Solaris</li>
+    </ul>
+    Please let me know of any additional platforms you managed to make
+    Java-Readline work on.
+
+    <hr>
+    <H2>Download</H2>
+
+    <p>Various packages are available for download. See the <a
+       href="http://sourceforge.net/project/showfiles.php?group_id=48669">download
+       area</a> of the Java-Readline project. The current version is
+      <strong>0.7.2</strong>.
+
+    <hr>
+    <H2>Mailing Lists</H2>
+
+    <p>You can subscribe to a number of Java-Readline related mailing
+      lists:
+    <ol>
+      <li>Java-readline-devel (development issues)
+      <li>Java-readline-users (Java-Readline usage)
+      <li>Java-readline-announce (announcement of new versions)
+    </ol>
+    To subscribe, go to the  <a
+       href="http://sourceforge.net/mail/?group_id=48669">mailing list
+    page</a> of the Java-Readline project.
+
+    <hr>
+    <H2>Projects using Java-Readline</H2>
+
+    <p>A number of projects use Java-Readline (or can be modified
+      easily to use it):
+      <ul>
+      <li><a href="www.jython.org">Jython</a>, a Java-based
+	implementation of Python (see the
+	instructions in the README in the <em>contrib/jpython</em>
+	subdirectory of the source-distribution of Java-Readline)
+      <li><a href="http://sourceforge.net/projects/henplus/">HenPlus</a>,
+	a JDBC-SQL-Shell.
+      <li><a href="www.beanshell.org">BeanShell</a>, see the
+	<em>contrib/bsh</em> subdirectory of the source-distribution
+	of Java-Readline
+    </ul>
+
+    <p>If your project is missing, just drop me a note.
+
+    <hr>
+    <p>You can find other Java and Linux related software on
+    <A HREF="http://www.bablokb.de/index.html">my Homepage</A>.
+    <HR>
+    <address>Bernhard Bablok (mail @ bablokb.de)</address>
+  </BODY>
+</HTML>
