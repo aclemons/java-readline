@@ -2,8 +2,14 @@ Next release:
 ============
 
 - mark methods replaced with [gs]etVar() as deprecated
-- implement constants for [gs]etVar() for editline/getline
 
+- fix Getline under Linux
+
+- make iLib writable (test loading multiple libraries)
+
+
+Later release:
+==============
 
 - replace make with ant
 - add test-suite
