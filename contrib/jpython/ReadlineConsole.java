@@ -30,7 +30,7 @@ public class ReadlineConsole extends InteractiveConsole {
      **/
     public String raw_input(PyObject prompt) {
         try {
-           return Readline.readline(prompt.toString());
+           return Readline.readline(prompt==null ? "" : prompt.toString());
         } catch (java.io.EOFException eofe) {
            throw new PyException(Py.EOFError);
         } catch (java.io.UnsupportedEncodingException e) {
