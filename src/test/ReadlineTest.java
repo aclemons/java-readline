@@ -101,6 +101,8 @@ public class ReadlineTest {
 
     Readline.setCompleter(new TestCompleter());
 
+    // main input loop
+
     while (true) {
       try {
 	line = Readline.readline("linux> ");
@@ -109,17 +111,20 @@ public class ReadlineTest {
 	else
 	  System.out.println("line = >" + line + "<");
       } catch (UnsupportedEncodingException enc) {
-	  System.err.println("caught UnsupportedEncodingException");
+	System.err.println("caught UnsupportedEncodingException");
+	break;
       } catch (IOException eof) {
-        System.out.println();
-	try {
-	  Readline.writeHistoryFile(history.getName());
-	} catch (Exception e) {
-	  System.err.println("Error writing history file!");
-	}
-	System.exit(0);
+	break;
       }
     }
+    try {
+      Readline.writeHistoryFile(history.getName());
+    } catch (Exception e) {
+      System.err.println("Error writing history file!");
+    }
+    System.out.println();
+    Readline.cleanup();
+    System.exit(0);
   }
 
 }
