@@ -28,7 +28,7 @@
 SUBDIRS := $(shell find . -type d -not -name "." -not -name "CVS" -maxdepth 1)
 PACKDIR := $(CLASSDIR)/$(shell echo `pwd` | sed -e's!.*/src/!!')
 
-.PHONY: all classes subdirs $(SUBDIRS)
+.PHONY: all classes subdirs clean $(SUBDIRS)
 
 JAVA_SOURCES := $(wildcard *.java)
 JAVA_TARGETS := $(JAVA_SOURCES:%.java=$(PACKDIR)/%.class)
@@ -52,3 +52,5 @@ $(PACKDIR)/%.class: %.java
 
 $(PACKDIR)/%.gif: %.gif
 	cp -vu $< $(PACKDIR)
+
+clean:
