@@ -28,7 +28,7 @@
 #
 
 TARGET    := java_readline
-README    := README
+README    := README README.1st
 CHANGELOG := ChangeLog
 LICENSE   := COPYING.LIB
 TODO      := TODO
@@ -41,10 +41,12 @@ DBOTTOM   := "$(COPYRIGHT)<br>Homepage: <a href="$(HOMEPAGE)">$(HOMEPAGE)</a>"
 DHEADER    = "<strong>$(NAME), Version $(VERSION)</strong>"
 DFOOTER    = "<strong>$(NAME), Version $(VERSION)</strong>"
 PACKROOT  := 
-SUBDIRS    = src etc
+SUBDIRS   := src etc
 PACKAGES  := test org.gnu.readline
-BIN_ADD    = $(wildcard *.so) $(APIDIR)
-SRC_ADD   := contrib
+BIN_ADD    = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+             $(JAR) $(shell ls *.so) $(APIDIR)
+SRC_ADD   := $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+             Makefile VERSION $(SUBDIRS) contrib
 MF_STUB   := etc/manifest.stub
 
 # native stuff
@@ -88,8 +90,7 @@ apidoc: $(APIDIR)
                 -version -author -private $(patsubst %,$(PACKROOT)%,$(PACKAGES))
 
 bin-dist: jar apidoc
-	tar -czf $(TARGET)-$(VERSION)-bin.tgz --exclude "CVS" \
-            $(README) $(TODO) $(CHANGELOG) $(LICENSE) $(JAR) $(BIN_ADD)
+	tar -czf $(TARGET)-$(VERSION)-bin.tgz --exclude "CVS" $(BIN_ADD)
 	-rm -fr $(TARGET)-$(VERSION)
 	mkdir $(TARGET)-$(VERSION)
 	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-bin.tgz)
@@ -97,9 +98,7 @@ bin-dist: jar apidoc
 	-rm -fr $(TARGET)-$(VERSION) $(TARGET)-$(VERSION)-bin.tgz 
 
 src-dist: clean
-	tar -czf $(TARGET)-$(VERSION)-src.tgz --exclude "CVS" \
-            $(README) VERSION $(TODO) $(CHANGELOG) Makefile \
-            $(LICENSE) $(SUBDIRS) $(SRC_ADD)
+	tar -czf $(TARGET)-$(VERSION)-src.tgz --exclude "CVS" $(SRC_ADD)
 	-rm -fr $(TARGET)-$(VERSION)
 	mkdir $(TARGET)-$(VERSION)
 	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-src.tgz)
