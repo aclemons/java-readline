@@ -1,0 +1,18 @@
+This is my "port" of GNU-Readline. Actually, it is a crude wrapper using the 
+Java Native Interface (JNI). It requires a shared library libJavaReadline.so
+in your library search path LD_LIBRARY_PATH.
+
+This version implements basic readline functionality like line editing and
+filename completion, which should be just enough for normal use. More specific
+readline functionality like custom completers (if you don't know what it is
+you don't need it) might be implemented in a future version (as soon as I
+figure out what has to be done).
+
+See the file INSTALL for details about compiling and installing the wrapper
+code.
+
+If you think you found a bug or want to contribute a version (a different
+makefile should do) for one of Bill's operating systems please drop me a 
+note.
+
+Bernhard Bablok (bablokb@gmx.de), November 1998

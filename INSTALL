@@ -1,0 +1,18 @@
+The distribution contains the files Readline.class and libJavaReadline.so
+(compiled with libc.so.5.4.46) for Intel-Linux. If this is good for you,
+just copy Readline.class to  .../gnu/readline/Readline.class with the
+directory gnu/readline relative to a directory in your CLASSPATH and copy
+libJavaReadline.so to a directory in your library search path (usually
+/usr/lib).
+
+If you are using a different platform, make sure it supports gcc and the
+readline, history and termcap library (if there is a port of bash, this
+should be OK). Edit the makefile variables at the beginning of the makefile
+(java compiler, target directory for class files, directory of include files)
+and run make. Then follow the above instructions. That's it!
+
+If you think you found a bug or want to contribute a version (a different
+makefile should do) for one of Bill's operating systems please drop me a 
+note.
+
+Bernhard Bablok (bablokb@gmx.de), November 1998
