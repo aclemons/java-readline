@@ -1,3 +1,6 @@
+For release 0.5.1:
+	- added word break patch (sets rl_completer_word_break_characters)
+	
 For release 0.5:
 	- added code for reading/writing history files
 	  (provided by erik@skiinfo.fr)
@@ -5,6 +8,7 @@ For release 0.5:
 	  (provided by erik@skiinfo.fr)
 	- added a sample custom completer
 	- changed ReadlineTest to include new methods
+	
 For release 0.43:
 	- rewrote makefile(s)
 	- changed directory structure
