@@ -39,6 +39,10 @@
 #include <editline/readline.h>
 #endif
 
+#ifdef JavaGetline
+#include "getline.h"
+#endif
+
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -89,8 +93,10 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
 #ifdef JavaReadline
    rl_catch_signals = 0; // don't install signal handlers in JNI code.
 #endif
+#ifndef JavaGetline
    rl_initialize();
    using_history();
+#endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,6 +195,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
 /* Get current history buffer                                                 */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
                                 (JNIEnv *env, jclass theClass, jobject jcoll) {
   jclass cls;
@@ -207,10 +214,12 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
     }
   }
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Clear the current history buffer                                           */
 /* -------------------------------------------------------------------------- */
+
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_clearHistoryImpl
                                                (JNIEnv *env, jclass theClass) {
   clear_history();
@@ -220,6 +229,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_clearHistoryImpl
 /* Get nth entry from history file                                            */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getHistoryLineImpl
                                        (JNIEnv *env, jclass theClass, jint i) {
   HIST_ENTRY *hist = NULL;
@@ -230,15 +240,18 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getHistoryLineImpl
   }
   return NULL;
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Get the size of the history buffer.                                        */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT jint JNICALL Java_org_gnu_readline_Readline_getHistorySizeImpl
                                                (JNIEnv *env, jclass theClass) {
   return (jint) history_length;
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Read keybindings from file.                                                */
@@ -315,6 +328,7 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
 /* Read history file                                                          */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   const char *filename;
@@ -339,11 +353,13 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
 
   read_history(buffer);
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Write history file                                                         */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   const char *filename;
@@ -368,12 +384,14 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
 
   write_history(buffer);
 }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
 /* Completer function, visible to the readline library                        */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 const char *java_completer(char *text, int state) {
   jstring jtext;
   jstring completion;
@@ -395,11 +413,13 @@ const char *java_completer(char *text, int state) {
   line = (*jniEnv)->GetStringUTFChars(jniEnv,completion,&is_copy);
   return line;
 }
+#endif
   
 /* -------------------------------------------------------------------------- */
 /* Install completer object                                                   */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
                                       (JNIEnv *env, jclass class, jobject obj) {
   
@@ -429,22 +449,26 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
     rl_completion_entry_function = NULL;
   }
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Returns rl_line_buffer
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT jstring JNICALL 
              Java_org_gnu_readline_Readline_getLineBufferImpl
                                                  (JNIEnv * env, jclass class) {
   jniEnv = env;
   return (*jniEnv)->NewStringUTF(jniEnv, rl_line_buffer);
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Returns rl_completer_word_break_characters                                 */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT jstring JNICALL 
              Java_org_gnu_readline_Readline_getWordBreakCharactersImpl
                                                  (JNIEnv * env, jclass class) {
@@ -462,11 +486,13 @@ JNIEXPORT jstring JNICALL
 
   return word_break_characters;
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Sets rl_completer_word_break_characters                                    */
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL 
                     Java_org_gnu_readline_Readline_setWordBreakCharactersImpl
                       (JNIEnv * env, jclass class, jstring jword_break_chars) {
@@ -498,6 +524,7 @@ JNIEXPORT void JNICALL
   }
   rl_completer_word_break_characters = word_break_buffer;
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Convert utf8-string to ucs1-string                   .                     */

@@ -92,16 +92,16 @@ public class Readline {
   private static BufferedReader iReader = null;
 
   /**
-     The current encoding of the BufferedReader. The default is the
-     value of the property <em>readline.encoding</em>. If this
-     property is unset, the default is null, so the BufferedReader
-     will use the default encoding.
-  */
+      The current encoding of the BufferedReader. The default is the
+      value of the property <em>readline.encoding</em>. If this
+      property is unset, the default is null, so the BufferedReader
+      will use the default encoding.
+   */
 
-  private static String iEncoding = 
+  private static String iEncoding =
     System.getProperty("readline.encoding", null);
 
-  /**
+   /**
      Configuration flag: throw an UnsupportedOperationException, if true.
      This value defaults to false.
   */
@@ -205,7 +205,7 @@ public class Readline {
 	  iReader = new BufferedReader(new InputStreamReader(System.in));
 	else
 	  iReader = new BufferedReader(
-	    new InputStreamReader(System.in, iEncoding));
+			         new InputStreamReader(System.in, iEncoding));
       }
       String line = iReader.readLine();
       if (line == null)
@@ -227,7 +227,7 @@ public class Readline {
   */
 
   public static void addToHistory(String line) {
-      if (iLib == ReadlineLibrary.GnuReadline)
+      if (iLib == ReadlineLibrary.GnuReadline||iLib == ReadlineLibrary.Getline)
         addToHistoryImpl(line);
       else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -347,7 +347,7 @@ public class Readline {
 
   public static void readHistoryFile(String filename)
                               throws EOFException, UnsupportedEncodingException {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
       readHistoryFileImpl(filename);
     else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -364,7 +364,7 @@ public class Readline {
 
   public static void writeHistoryFile(String filename)
                               throws EOFException, UnsupportedEncodingException {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
       writeHistoryFileImpl(filename);
     else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -383,7 +383,8 @@ public class Readline {
     
   public static void setCompleter(ReadlineCompleter rlc) {
     iCompleter = rlc;
-    if (iLib != ReadlineLibrary.PureJava) {
+    if (iLib == ReadlineLibrary.GnuReadline ||
+                                             iLib == ReadlineLibrary.Editline) {
       setCompleterImpl(iCompleter);
     } else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -408,7 +409,8 @@ public class Readline {
   */
     
   public static void cleanup() {
-    if (iLib != ReadlineLibrary.PureJava) {
+    if (iLib == ReadlineLibrary.GnuReadline ||
+                                             iLib == ReadlineLibrary.Editline) {
       cleanupReadlineImpl();
     }      
   }
@@ -423,7 +425,8 @@ public class Readline {
    */
 
    public static boolean hasTerminal() {
-     if (iLib != ReadlineLibrary.PureJava) {
+    if (iLib == ReadlineLibrary.GnuReadline ||
+                                             iLib == ReadlineLibrary.Editline) {
        return hasTerminalImpl();
      }
      return true;
@@ -436,7 +439,7 @@ public class Readline {
   */
     
   public static String getWordBreakCharacters() {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
       return getWordBreakCharactersImpl();
     else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -454,7 +457,7 @@ public class Readline {
   */
     
   public static String getLineBuffer() {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
       return getLineBufferImpl();
     else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -474,7 +477,7 @@ public class Readline {
   public static void 
     setWordBreakCharacters(String wordBreakCharacters)
                               throws UnsupportedEncodingException {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
       setWordBreakCharactersImpl(wordBreakCharacters);
     else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -512,21 +515,21 @@ public class Readline {
 
     @param encoding encoding to use
   */
-
+    
   public static void setEncoding(String encoding) {
-    iEncoding = encoding;
+      iEncoding = encoding;
   }
 
   /////////////////////////////////////////////////////////////////////////////
-
+  
   /**
-    Query current encoding of fallback BufferedReader.
+     Query current encoding of fallback BufferedReader.
 
-    @return current encoding
+     @return current encoding
   */
 
   public static String getEncoding() {
-    return iEncoding;
+   return iEncoding;
   }
 
   /////////////////////////////////////////////////////////////////////////////

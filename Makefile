@@ -54,7 +54,7 @@ DOCDIR    = $(PREFIX)/doc
 JAVALIBDIR= $(PREFIX)/share/java
 
 # libraries to build
-T_LIBS    = JavaReadline JavaEditline
+T_LIBS    = JavaReadline
 
 # Operating system dependent
 JAVAINCLUDE       = $(JAVA_HOME)/include
@@ -78,6 +78,9 @@ RPM_BASE        = `pwd`/$(BUILDDIR)/
 world : jar build-native
 
 jar: build-java
+	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
+
+$(JAR):
 	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
 
 build-java: $(BUILDDIR)
@@ -128,10 +131,11 @@ rpm: src-dist
 	cp $(TARGET)-$(VERSION)-src.tar.gz $(RPM_BASE)/SOURCES
 	rpm --define _topdir$(RPM_BASE) -ba $(RPM_BASE)/SPECS/libreadline-java.spec
 
-test: jar build-native
-	LD_LIBRARY_PATH=. java -jar $(JAR) src/test/tinputrc
+test: $(JAR) build-native
+	LD_LIBRARY_PATH=. java -jar $(JAR) src/test/tinputrc $(ARGS)
 
 clean:
-	-rm -fr `find . -name "*.o" -o -name "*.h" -o -name "*~"` \
+	$(MAKE) -C src/native clean
+	-rm -fr `find . -name "*.o" -o -name "*~"` \
 		$(JAR) $(TARGET)-*.tar.*z* $(APIDIR) \
 		$(BUILDDIR) *.so .rltest_history

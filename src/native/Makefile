@@ -27,6 +27,8 @@
 # $Revision$
 #
 
+.PHONY: org_gnu_readline_Readline.o
+
 ROOTDIR=../..
 BUILDDIR=$(ROOTDIR)/build
 
@@ -47,14 +49,29 @@ JavaReadline:
 JavaEditline:
 	make TG=$@ lib
 
-$(ROOTDIR)/lib$(TG).so: org_gnu_readline_Readline.c org_gnu_readline_Readline.h
+JavaGetline:
+	make TG=$@ lib
+
+OBJECTS := org_gnu_readline_Readline.o
+ifeq ($(TG),JavaGetline)
+OBJECTS += getline.o
+CFLAGS += -DPOSIX
+endif
+
+$(ROOTDIR)/lib$(TG).so: $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
+
+org_gnu_readline_Readline.o: org_gnu_readline_Readline.h \
+	                                             org_gnu_readline_Readline.c
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
-	-c org_gnu_readline_Readline.c
-	$(CC) -shared org_gnu_readline_Readline.o $(LIBPATH) $($(TG)_LIBS) -o $@
+	                                          -c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
 
+getline.o: getline.c
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) -c getline.c
+
 clean:
-	-rm -f org_gnu_readline_Readline.h org_gnu_readline_Readline.o
+	-rm -f org_gnu_readline_Readline.h org_gnu_readline_Readline.o getline.o

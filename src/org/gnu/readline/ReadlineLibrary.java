@@ -52,6 +52,13 @@ public final class ReadlineLibrary {
     new ReadlineLibrary("JavaEditline");
 
   /**
+     Constant for Getline implementation.
+  */
+
+  public static final ReadlineLibrary Getline = 
+    new ReadlineLibrary("JavaGetline");
+
+  /**
      The name of the backing native library.
   */
 
@@ -88,6 +95,8 @@ public final class ReadlineLibrary {
       return GnuReadline;
     else if (name.equals("Editline"))
       return Editline;
+    else if (name.equals("Getline"))
+      return Getline;
     else if (name.equals("PureJava"))
       return PureJava;
     return null;
