@@ -1,5 +1,3 @@
-- update ReadlineReader (add ReadlineLibrary argument to contructors)
-
 - Add support for the following readline functions/variables:
   * rl_initialize
   * rl_library_version
