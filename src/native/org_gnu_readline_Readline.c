@@ -39,14 +39,31 @@
 #include <editline/readline.h>
 #endif
 
+#include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
 
-#define BUF_LENGTH  1024
+/* -------------------------------------------------------------------------- */
+/* Global buffer. The buffer is allocated when needed and grows in steps of   */
+/* 1024. It is never freed, but this is not a problem since in realistic      */
+/* environments it should never be larger than a few KB. This strategy will   */
+/* prevent constant malloc/free-cycles and keeps the code clean.              */
+/*                                                                            */
+/* TODO: buffer is changed by utf82ucs and ucs2utf8, but this is not really   */
+/*       transparent. Add some additional comments.                           */
+/*       Change the variable name buffer to globalBuffer.                     */
+/* -------------------------------------------------------------------------- */
 
-static char* utf2ucs(const char *utf8, char *ucs, size_t n);
-static char* ucs2utf(const char *ucs, char *utf8, size_t n);
+static char*  buffer = NULL;
+static size_t bufLength = 0;
+
+static char*  word_break_buffer = NULL;
+
+static char* utf2ucs(const char *utf8);
+static char* ucs2utf(const char *ucs);
+static int   allocBuffer(size_t n);
 
 static jobject   jniObject;
 static jmethodID jniMethodId;
@@ -106,11 +123,10 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_addToHistoryImpl
                                (JNIEnv *env, jclass theClass, jstring jline) {
 
   const char *line;
-  char buffer[BUF_LENGTH];
   jboolean is_copy;
 
   line = (*env)->GetStringUTFChars(env,jline,&is_copy);
-  if (!utf2ucs(line,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(line)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env, jline, line);
@@ -134,7 +150,6 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_addToHistoryImpl
 JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
                                (JNIEnv *env, jclass theClass, jstring jprompt) {
 
-  char buffer[BUF_LENGTH];
   const char *prompt;
   char *input;
   jboolean is_copy;
@@ -142,7 +157,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
   /* retrieve prompt argument and convert to ucs ---------------------------- */
 
   prompt = (*env)->GetStringUTFChars(env,jprompt,&is_copy);
-  if (!utf2ucs(prompt,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(prompt)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env, jprompt, prompt);
@@ -164,7 +179,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
       (*env)->ThrowNew(env,newExcCls,"");
     return NULL;
   } else if (*input) {
-    ucs2utf(input,buffer,BUF_LENGTH);
+    ucs2utf(input);
     return (*env)->NewStringUTF(env,buffer);
   } else
     return NULL;
@@ -207,15 +222,12 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_clearHistoryImpl
 
 JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getHistoryLineImpl
                                        (JNIEnv *env, jclass theClass, jint i) {
-  char buffer[BUF_LENGTH];
   HIST_ENTRY *hist = NULL;
 
   if ((hist = history_get ((int) (i + 1))) != NULL) {
-    char buffer[BUF_LENGTH];
-    ucs2utf(hist->line,buffer,BUF_LENGTH);
+    ucs2utf(hist->line);
     return (*env)->NewStringUTF(env,buffer);
   }
-
   return NULL;
 }
 
@@ -235,14 +247,13 @@ JNIEXPORT jint JNICALL Java_org_gnu_readline_Readline_getHistorySizeImpl
 #ifdef JavaReadline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  char buffer[BUF_LENGTH];
   const char *filename;
   jboolean is_copy;
 
   /* retrieve filename argument and convert to ucs -------------------------- */
 
   filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(filename)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env,jfilename,filename);
@@ -273,14 +284,13 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
 #ifdef JavaReadline
 JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
                                 (JNIEnv *env, jclass theClass, jstring jline) {
-  char buffer[BUF_LENGTH];
   const char *line;
   jboolean is_copy;
 
   /* retrieve line argument and convert to ucs -------------------------- */
 
   line = (*env)->GetStringUTFChars(env,jline,&is_copy);
-  if (!utf2ucs(line,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(line)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env,jline,line);
@@ -307,14 +317,13 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
 
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  char buffer[BUF_LENGTH];
   const char *filename;
   jboolean is_copy;
     
   /* retrieve filename argument and convert to ucs -------------------------- */
 
   filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(filename)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env,jfilename,filename);
@@ -337,14 +346,13 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
 
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  char buffer[BUF_LENGTH];
   const char *filename;
   jboolean is_copy;
   
   /* retrieve filename argument and convert to ucs -------------------------- */
 
   filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename,buffer,BUF_LENGTH)) {
+  if (!utf2ucs(filename)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env,jfilename,filename);
@@ -415,7 +423,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
       rl_completion_entry_function = NULL;
       return;
     }
-    rl_completion_entry_function = (Function*)java_completer;
+    rl_completion_entry_function = (rl_compentry_func_t *) java_completer;
   }
   else {
     rl_completion_entry_function = NULL;
@@ -459,8 +467,6 @@ JNIEXPORT jstring JNICALL
 /* Sets rl_completer_word_break_characters                                    */
 /* -------------------------------------------------------------------------- */
 
-static char word_break_buffer[BUF_LENGTH];
-
 JNIEXPORT void JNICALL 
                     Java_org_gnu_readline_Readline_setWordBreakCharactersImpl
                       (JNIEnv * env, jclass class, jstring jword_break_chars) {
@@ -468,7 +474,7 @@ JNIEXPORT void JNICALL
   jboolean is_copy;
   
   word_break_chars = (*env)->GetStringUTFChars(env,jword_break_chars,&is_copy);
-  if (!utf2ucs(word_break_chars,word_break_buffer,BUF_LENGTH)) {
+  if (!utf2ucs(word_break_chars)) {
     jclass newExcCls;
     if (is_copy == JNI_TRUE)
       (*env)->ReleaseStringUTFChars(env,jword_break_chars,word_break_chars);
@@ -480,6 +486,16 @@ JNIEXPORT void JNICALL
   if (is_copy == JNI_TRUE)
     (*env)->ReleaseStringUTFChars(env,jword_break_chars,word_break_chars);
   
+  if (word_break_buffer)
+    free(word_break_buffer);
+  word_break_buffer = strdup(buffer);
+  if (!word_break_buffer) {
+    jclass newExcCls;
+    newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;    
+  }
   rl_completer_word_break_characters = word_break_buffer;
 }
 
@@ -487,13 +503,20 @@ JNIEXPORT void JNICALL
 /* Convert utf8-string to ucs1-string                   .                     */
 /* -------------------------------------------------------------------------- */
 
-char* utf2ucs(const char *utf8, char *ucs, size_t n) {
+char* utf2ucs(const char *utf8) {
   const char *pin;
-  char *pout;
+  char *pout, *ucs;
   unsigned char current, next;
   int i;
+  size_t n;
 
-  for (i=0,pin=utf8,pout=ucs; i<n && *pin; i++,pin++,pout++) {
+  n = strlen(utf8);
+  if (2*n > bufLength) {
+    if (allocBuffer(2*n))
+      return NULL;
+  }
+
+  for (i=0,pin=utf8,pout=buffer; i<bufLength && *pin; i++,pin++,pout++) {
     current = *pin;
     if (current >= 0xE0) {                   /* we support only two-byte utf8 */
       return NULL;
@@ -508,36 +531,57 @@ char* utf2ucs(const char *utf8, char *ucs, size_t n) {
 	(next & 63);                         /* last six bits of second byte  */
     }
   }
-  if (i<n)
+  if (i<bufLength)
     *pout = '\0';
-  return ucs;
+  return buffer;
 }
 
 /* -------------------------------------------------------------------------- */
 /* Convert ucs1-string to utf8-string                   .                     */
 /* -------------------------------------------------------------------------- */
 
-char* ucs2utf(const char *ucs, char *utf8, size_t n) {
+char* ucs2utf(const char *ucs) {
   const char *pin;
   char *pout;
   unsigned char current;
   int i;
+  size_t n;
 
-  for (i=0,pin=ucs,pout=utf8; i<n && *pin; i++,pin++,pout++) {
+  n = strlen(ucs);
+  if (2*n > bufLength) {
+    if (allocBuffer(2*n))
+      return NULL;
+  }
+
+  for (i=0,pin=ucs,pout=buffer; i<bufLength && *pin; i++,pin++,pout++) {
     current = *pin;
     if (current < 0x80)                      /* one-byte utf8                 */
       *pout = current;
     else {                                   /* two-byte utf8                 */
       *pout = 0xC0 + (current>>6);           /* first two bits                */
       pout++, i++;                           /* examine second byte           */
-      if (i>=n) {                            /* cannot convert last byte      */
+      if (i>=bufLength) {                    /* cannot convert last byte      */
 	*(--pout) = '\0';
-	return utf8;
+	return buffer;
       }
       *pout = 0x80 + (current & 63);         /* last six bits                 */
     }
   }
-  if (i<n)
+  if (i<bufLength)
     *pout = '\0';
-  return utf8;
+  return buffer;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Allocate a buffer of at least the given size         .                     */
+/* -------------------------------------------------------------------------- */
+
+int allocBuffer(size_t newSize) {
+  assert(newSize >= bufLength);
+  newSize = (newSize/1024 + 1) * 1024;
+  buffer = realloc(buffer,newSize);
+  if (buffer == NULL)
+    return 1;
+  bufLength = newSize;
+  return 0;
 }
