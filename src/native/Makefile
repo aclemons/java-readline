@@ -45,4 +45,4 @@ org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	touch org_gnu_readline_Readline.h
 
 clean:
-	-rm org_gnu_readline_Readline.h org_gnu_readline_Readline.o
+	-rm $(SO) org_gnu_readline_Readline.h org_gnu_readline_Readline.o
