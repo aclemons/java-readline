@@ -136,6 +136,8 @@ public class Readline {
   public static void readInitFile(String filename) throws IOException {
     if (iLib != ReadlineLibrary.PureJava)
       readInitFileImpl(filename);
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -151,6 +153,8 @@ public class Readline {
   public static boolean parseAndBind(String line) {
     if (iLib != ReadlineLibrary.PureJava)
       return parseAndBindImpl(line);
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
     else
       return true;
   }
@@ -166,6 +170,8 @@ public class Readline {
                               throws EOFException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       readHistoryFileImpl(filename);
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
   }
 
 
@@ -181,6 +187,8 @@ public class Readline {
                               throws EOFException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       writeHistoryFileImpl(filename);
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
   }
 
 
@@ -196,7 +204,8 @@ public class Readline {
     if (iLib != ReadlineLibrary.PureJava) {
       iCompleter = rlc;
       setCompleterImpl(rlc);
-    }
+    } else if (iThrowError)
+      throw new UnsupportedMethodError();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -220,6 +229,8 @@ public class Readline {
   public static String getWordBreakCharacters() {
     if (iLib != ReadlineLibrary.PureJava)
       return getWordBreakCharactersImpl();
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
     else
       return null;
   }
@@ -237,6 +248,8 @@ public class Readline {
                               throws UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       setWordBreakCharactersImpl(wordBreakCharacters);
+    else if (iThrowError)
+      throw new UnsupportedMethodError();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -249,7 +262,7 @@ public class Readline {
      @see org.gnu.readline.UnsupportedMethodError
   */
 
-  public void setThrowErrorOnUnsupportedMethod(boolean flag) {
+  public static void setThrowErrorOnUnsupportedMethod(boolean flag) {
     iThrowError = flag;
   }
 
@@ -263,7 +276,7 @@ public class Readline {
        org.gnu.readline.Readline#setThrowErrorOnUnsupportedMethod(boolean flag)
   */
 
-  public boolean getThrowErrorOnUnsupportedMethod() {
+  public static boolean getThrowErrorOnUnsupportedMethod() {
     return iThrowError;
   }
 
