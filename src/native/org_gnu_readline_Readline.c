@@ -30,8 +30,15 @@
 
 #include "org_gnu_readline_Readline.h"
 
+#ifdef JavaReadline
 #include <readline/readline.h>
-#include <readline/history.h>  
+#include <readline/history.h>
+#endif
+
+#ifdef JavaEditline
+#include <editline/readline.h>
+#endif
+
 #include <string.h>
 #include <errno.h>
 
@@ -115,6 +122,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
 /* Read keybindings from file.                                                */
 /* -------------------------------------------------------------------------- */
 
+#ifdef JavaReadline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   char buffer[BUF_LENGTH];
@@ -146,12 +154,13 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
     return;
   }
 }
-
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Read keybinding from string.                                               */
 /* -------------------------------------------------------------------------- */
 
+#ifdef JavaReadline
 JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
                                 (JNIEnv *env, jclass theClass, jstring jline) {
   char buffer[BUF_LENGTH];
@@ -180,6 +189,7 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
   else
     return (jboolean) JNI_TRUE;
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Read history file                                                          */
