@@ -29,7 +29,7 @@
 
 .PHONY: all clean
 
-SO := $(BUILDDIR)/libJavaReadline.so
+SO := $(ROOTDIR)/libJavaReadline.so
 
 all: $(SO)
 
