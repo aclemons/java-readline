@@ -43,7 +43,7 @@ $(ROOTDIR)/lib%.so: clean_o org_gnu_readline_Readline.o
 
 org_gnu_readline_Readline.o: org_gnu_readline_Readline.c \
                                                    org_gnu_readline_Readline.h
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -DLIB_TG=$(TG) \
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
 	-c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
