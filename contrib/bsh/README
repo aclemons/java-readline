@@ -11,3 +11,13 @@ and create the archive again.
 substitution tricks from the jpython mod for readline.)
 
 -Shane Celis <shane@terraspring.com>
+
+
+Note: starting from JavaReadline 0.6, you have the choice of various backing
+readline implementations. Since the license of BSH does not conform to the
+GPL, it cannot be used together with GNU-Readline.
+As a consequence, the backing implementation for BeanShell is Editline,
+and I modified ReadlineReader, Interpreter.java and Interpreter.java.diff
+accordingly.
+
+Bernhard
