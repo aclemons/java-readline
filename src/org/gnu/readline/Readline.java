@@ -1,7 +1,7 @@
 /**************************************************************************
 /* Readline.java -- Java wrapper of GNU readline
 /*
-/* Java Wrapper Copyright (c) 1998 by Bernhard Bablok (mail@bablokb.de)
+/* Java Wrapper Copyright (c) 1998-2001 by Bernhard Bablok (mail@bablokb.de)
 /*
 /* This program is free software; you can redistribute it and/or modify
 /* it under the terms of the GNU Library General Public License as published
@@ -18,7 +18,6 @@
 /* the Free Software Foundation Inc., 59 Temple Place - Suite 330,
 /* Boston, MA  02111-1307 USA
 /**************************************************************************/
- 
 
 package org.gnu.readline;
 
@@ -34,6 +33,8 @@ import java.io.*;
 */
 
 public class Readline {
+  
+  private static ReadlineCompleter iCompleter = null;
 
   static {
     System.loadLibrary("JavaReadline");
@@ -82,4 +83,52 @@ public class Readline {
   */
 
   public native static boolean parseAndBind(String line);
+
+  /**
+     Reads a history file into memory
+       @param filename Name of history file to read
+     */
+
+  public native static void readHistoryFile(String filename)
+                              throws EOFException, UnsupportedEncodingException;
+
+  /**
+     Writes a history file to disc
+
+     @param filename Name of history file to write
+  */
+
+  public native static void writeHistoryFile(String filename)
+                              throws EOFException, UnsupportedEncodingException;
+
+  /**
+     Set your completer function.
+
+     @param rlc An object implementing the ReadlineCompleter interface
+  */
+    
+  public static void setCompleter(ReadlineCompleter rlc) {
+    iCompleter = rlc;
+    installCompleter(rlc);
+  }
+
+  /**
+     Query current completer function.
+
+     @return Current ReadlineCompleter object
+  */
+    
+  public static ReadlineCompleter getCompleter() {
+    return iCompleter;
+  }
+
+  /**
+     Installs your completer function.
+
+     @param readlinecompleter An object which implements the 
+     ReadlineCompleter interface
+  */
+    
+  private native static void installCompleter(ReadlineCompleter rlc);
+    
 }
