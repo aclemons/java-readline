@@ -32,7 +32,7 @@ make DESTDIR=$RPM_BUILD_ROOT T_LIBS="JavaReadline" install
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,-,root)
+%defattr(-,root,root)
 %{prefix}/lib/libJavaReadline.so
 %{prefix}/share/java/%{name}.jar
 %doc ChangeLog README README.1st VERSION api

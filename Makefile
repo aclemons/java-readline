@@ -52,9 +52,6 @@ BINLIBDIR = $(PREFIX)/lib
 DOCDIR    = $(PREFIX)/doc
 JAVALIBDIR= $(PREFIX)/share/java
 
-# this might be /usr/src/RPM or /usr/src/packages, depending on the distrib
-RPM_BASE  = /usr/src/redhat
-
 # libraries to build
 T_LIBS    = JavaReadline JavaEditline
 
@@ -74,6 +71,8 @@ VERSION         = `cat VERSION`
 JAR             = $(TARGET).jar
 APIDIR          = ./api
 BUILDDIR        = ./build
+# we build the rpm relative to our build..
+RPM_BASE        = `pwd`/$(BUILDDIR)/
 
 world : jar build-native
 
@@ -122,9 +121,11 @@ $(METADIR):
 	mkdir $(METADIR)
 
 rpm: src-dist
+	mkdir -p $(RPM_BASE)/SPECS $(RPM_BASE)/SOURCES $(RPM_BASE)/BUILD \
+	      $(RPM_BASE)/SRPMS $(RPM_BASE)/RPMS
 	cp etc/libreadline-java.spec $(RPM_BASE)/SPECS
 	cp $(TARGET)-$(VERSION)-src.tar.gz $(RPM_BASE)/SOURCES
-	rpm -ba $(RPM_BASE)/SPECS/libreadline-java.spec
+	rpm --define _topdir$(RPM_BASE) -ba $(RPM_BASE)/SPECS/libreadline-java.spec
 
 test: jar build-native
 	LD_LIBRARY_PATH=. java -jar $(JAR) src/test/tinputrc
