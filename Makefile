@@ -27,6 +27,78 @@
 # $Revision$
 #
 
+export 
+
+# what to build   -------------------------------------------------------------
+
+T_LIBS    = JavaReadline
+
+# java-compiler flavor   ------------------------------------------------------
+
+## normal javac
+JAVAC = javac
+JC_FLAGS = 
+
+## with jikes
+#JAVAC = jikes
+#JC_FLAGS = -O +E
+
+# installation directories   --------------------------------------------------
+
+PREFIX    = /usr
+BINLIBDIR = $(PREFIX)/lib
+DOCDIR    = $(PREFIX)/doc
+JAVALIBDIR= $(PREFIX)/share/java
+
+# OS-specific stuff   ---------------------------------------------------------
+
+# Operating system/compiler dependent, default is LINUX.
+# Note that both CYGWIN and MSWIN use the cygwin-environment,
+# but the latter uses a native MS-compiler.
+
+OS_FLAVOR = LINUX
+#OS_FLAVOR = CYGWIN
+#OS_FLAVOR = MSWIN
+#OS_FLAVOR = MAC
+
+# Linux
+
+ifeq (LINUX,$(OS_FLAVOR))
+JAVAINCLUDE = $(JAVA_HOME)/include
+JAVANATINC  = $(JAVA_HOME)/include/linux
+endif
+
+# Cygwin (builds fine, but does not work)
+
+ifeq (CYGWIN,$(OS_FLAVOR))
+DRIVE_C := /cygdrive/c
+JAVA_HOME := c:/j2sdk1.4.0
+JAVAINCLUDE = $(JAVA_HOME)/include
+JAVANATINC := $(JAVA_HOME)/include/win32
+PATH:=$(subst c:,$(DRIVE_C),$(JAVA_HOME))/bin:$(PATH)
+endif
+
+# Visual C++ (only suppports getline)
+
+ifeq (MSWIN,$(OS_FLAVOR))
+DRIVE_C := /cygdrive/c
+JAVA_HOME := c:/j2sdk1.4.0
+JAVAINCLUDE = $(JAVA_HOME)/include
+JAVANATINC := $(JAVA_HOME)/include/win32
+PATH:=$(subst c:,$(DRIVE_C),$(JAVA_HOME))/bin:$(PATH)
+PATH:=$(DRIVE_C)/Programme/DevStudio/VC/bin:$(DRIVE_C)/Programme/DevStudio/SharedIDE/bin/:$(PATH)
+T_LIBS = JavaGetline
+ARGS   = Getline
+endif
+
+# MAC
+ifeq (MAC,$(OS_FLAVOR))
+JAVAINCLUDE = /System/Library/Frameworks/JavaVM.framework/Headers
+JAVANATINC  =
+endif
+
+# some constants, you should not need to change these variables   -------------
+
 TARGET    = libreadline-java
 README    = README README.1st
 NEWS      = NEWS
@@ -47,50 +119,13 @@ SRC_ADD   = $(README) $(NEWS) $(TODO) $(CHANGELOG) $(LICENSE) \
              Makefile VERSION $(SUBDIRS) contrib src etc
 MF_STUB   = etc/manifest.stub
 
-# installation procedure
-PREFIX    = /usr
-BINLIBDIR = $(PREFIX)/lib
-DOCDIR    = $(PREFIX)/doc
-JAVALIBDIR= $(PREFIX)/share/java
-
-# libraries to build
-T_LIBS    = JavaReadline
-
-# Operating system dependent
-JAVAINCLUDE       = $(JAVA_HOME)/include
-JAVANATINC        = $(JAVA_HOME)/include/linux
-
-# Windows must set WIN32=CYGWIN or WIN32=MSC
-
-# set this in any case
-export DRIVE_C := /cygdrive/c
-ifneq (,$(WIN32))
-JAVA_HOME := c:/j2sdk1.4.0
-JAVANATINC := $(JAVA_HOME)/include/win32
-export PATH:=$(subst c:,$(DRIVE_C),$(JAVA_HOME))/bin:$(PATH)
-endif
-
-# only for MSC (Microsoft-C): only Getline supported
-ifeq (MSC,$(WIN32))
-export PATH:=$(DRIVE_C)/Programme/DevStudio/VC/bin:$(DRIVE_C)/Programme/DevStudio/SharedIDE/bin/:$(PATH)
-T_LIBS = JavaGetline
-ARGS   = Getline
-endif
-
-## normal javac
-JAVAC = javac
-JC_FLAGS = 
-
-## with jikes
-#JAVAC = jikes
-#JC_FLAGS = -O +E
-
 VERSION         = `cat VERSION`
 JAR             = $(TARGET).jar
 APIDIR          = ./api
 BUILDDIR        = ./build
-# we build the rpm relative to our build..
 RPM_BASE        = `pwd`/$(BUILDDIR)/
+
+# targets, finally ;-)   ------------------------------------------------------
 
 world : jar build-native
 
