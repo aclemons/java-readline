@@ -1,4 +1,4 @@
-For release 0.61:
+For release 0.6.1:
         - bugfix: fallback-solution did not throw EOFException
 	- bugfix: missing P ("ureJava") in method Readline.byName() 
 
