@@ -54,11 +54,11 @@ public class Readline {
   private static BufferedReader iReader = null;
 
   /**
-     Configuration flag: throw an UnsupportedMethodError, if true. This
-     value defaults to false.
+     Configuration flag: throw an UnsupportedOperationException, if true.
+     This value defaults to false.
   */
 
-  private static boolean iThrowError = false;
+  private static boolean iThrowException = false;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -136,8 +136,8 @@ public class Readline {
   public static void readInitFile(String filename) throws IOException {
     if (iLib != ReadlineLibrary.PureJava)
       readInitFileImpl(filename);
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -153,8 +153,8 @@ public class Readline {
   public static boolean parseAndBind(String line) {
     if (iLib != ReadlineLibrary.PureJava)
       return parseAndBindImpl(line);
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
     else
       return true;
   }
@@ -170,8 +170,8 @@ public class Readline {
                               throws EOFException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       readHistoryFileImpl(filename);
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
   }
 
 
@@ -187,8 +187,8 @@ public class Readline {
                               throws EOFException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       writeHistoryFileImpl(filename);
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
   }
 
 
@@ -204,8 +204,8 @@ public class Readline {
     if (iLib != ReadlineLibrary.PureJava) {
       iCompleter = rlc;
       setCompleterImpl(rlc);
-    } else if (iThrowError)
-      throw new UnsupportedMethodError();
+    } else if (iThrowException)
+      throw new UnsupportedOperationException();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -229,8 +229,8 @@ public class Readline {
   public static String getWordBreakCharacters() {
     if (iLib != ReadlineLibrary.PureJava)
       return getWordBreakCharactersImpl();
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
     else
       return null;
   }
@@ -248,22 +248,21 @@ public class Readline {
                               throws UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       setWordBreakCharactersImpl(wordBreakCharacters);
-    else if (iThrowError)
-      throw new UnsupportedMethodError();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
   }
 
   /////////////////////////////////////////////////////////////////////////////
 
   /**
      Configure behavior in case an unsupported method is called. If argument
-     is true, unsupported methods throw an UnsupportedMethodError.
+     is true, unsupported methods throw an UnsupportedOperationException.
 
      @param flag configuration flag
-     @see org.gnu.readline.UnsupportedMethodError
   */
 
-  public static void setThrowErrorOnUnsupportedMethod(boolean flag) {
-    iThrowError = flag;
+  public static void setThrowExceptionOnUnsupportedMethod(boolean flag) {
+    iThrowException = flag;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -272,12 +271,10 @@ public class Readline {
      Query behavior in case an unsupported method is called.
 
      @return configuration flag
-     @see
-       org.gnu.readline.Readline#setThrowErrorOnUnsupportedMethod(boolean flag)
   */
 
-  public static boolean getThrowErrorOnUnsupportedMethod() {
-    return iThrowError;
+  public static boolean getThrowExceptionOnUnsupportedMethod() {
+    return iThrowException;
   }
 
   /////////////////////////////////////////////////////////////////////////////
