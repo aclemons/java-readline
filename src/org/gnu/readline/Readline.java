@@ -286,7 +286,7 @@ public class Readline {
   /**
    *  return if we have a terminal. This requires, that any of the native
    *  libraries have been loaded yet
-   *  (so call Readline.{@link load(ReadlineLibrary)}())
+   *  (so call Readline.{@link #load(ReadlineLibrary)}())
    *  first, otherwise this will always return true.
    */
 

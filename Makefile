@@ -27,7 +27,7 @@
 # $Revision$
 #
 
-TARGET    = java_readline
+TARGET    = libreadline-java
 README    = README README.1st
 CHANGELOG = ChangeLog
 LICENSE   = COPYING.LIB
@@ -45,6 +45,12 @@ BIN_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
 SRC_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
              Makefile VERSION $(SUBDIRS) contrib src etc
 MF_STUB   = etc/manifest.stub
+
+# installation procedure
+PREFIX    = /usr
+BINLIBDIR = $(PREFIX)/lib
+DOCDIR    = $(PREFIX)/doc
+JAVALIBDIR= $(PREFIX)/share/java
 
 # this might be /usr/src/RPM or /usr/src/packages, depending on the distrib
 RPM_BASE  = /usr/src/redhat
@@ -86,6 +92,13 @@ apidoc: $(APIDIR)
                 -doctitle $(DTITLE) -footer $(DFOOTER) -header $(DHEADER) \
                 -bottom $(DBOTTOM) \
                 -version -author `find src -name "*.java"` 
+
+install: jar build-native apidoc
+	install -D $(JAR)    $(DESTDIR)$(JAVALIBDIR)/$(JAR)
+	install -d $(DESTDIR)$(BINLIBDIR)
+	install  *.so        $(DESTDIR)$(BINLIBDIR)
+	install -d $(DESTDIR)$(DOCDIR)/$(TARGET)-$(VERSION)
+	cp -r api $(DESTDIR)$(DOCDIR)/$(TARGET)-$(VERSION)
 
 bin-dist: jar build-native apidoc
 	mkdir -p "$(TARGET)-$(VERSION)"

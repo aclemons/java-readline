@@ -8,7 +8,7 @@ Prefix: /usr
 Provides: java_readline
 Packager: Henner Zeller <H.Zeller@acm.org>
 Release: 1
-Source: java_readline-%{version}-src.tar.gz
+Source: %{name}-%{version}-src.tar.gz
 URL: http://www.bablokb.de/java/readline.html
 Version: %{version}
 Buildroot: /tmp/javareadline-build
@@ -20,17 +20,13 @@ Java Native Interface (JNI). It allows to write console Java applications
 that provide commandline editing functions like history and TAB-completion.
 
 %prep
-%setup -q -n java_readline-%{version}
+%setup -q
 
 %build
-make T_LIBS="JavaReadline" world apidoc
 
 %install
 rm -fr $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/%{prefix}/lib
-mkdir -p $RPM_BUILD_ROOT/%{prefix}/share/java
-cp java_readline.jar $RPM_BUILD_ROOT/%{prefix}/share/java/%{name}.jar
-cp libJavaReadline.so $RPM_BUILD_ROOT/%{prefix}/lib
+make DESTDIR=$RPM_BUILD_ROOT T_LIBS="JavaReadline" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
