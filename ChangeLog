@@ -1,3 +1,11 @@
+For release 0.5.2:
+	- added ReadlineReader (provided by Shane Celis <shane@terrapsring.com>)
+	- added contrib-directory with
+	  * bsh (provided by Shane Celis <shane@terrapsring.com>)
+	  * jpython (moved from my own website into this package)
+	- added section about LICENSING ISSUES in README
+	- updated TODO
+	
 For release 0.5.1:
 	- added word break patch (sets rl_completer_word_break_characters)
 	
