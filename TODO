@@ -1,3 +1,10 @@
-- Add support for the following readline functions/variables:
-  * rl_initialize
-  * rl_library_version
+Next release:
+============
+
+- mark methods replaced with [gs]etVar() as deprecated
+- implement constants for [gs]etVar() for editline/getline
+
+
+- replace make with ant
+- add test-suite
+- implement wrapper for jline
