@@ -3,9 +3,10 @@ using the Java Native Interface (JNI).
 
 This version implements basic readline functionality like line editing and
 filename completion, which should be just enough for normal use.
-Code for custom completers and history file reading/writing was provided
-by erik (erik@skiinfo.fr). Since I changed some of the code, all bugs
-are my fault and bugreports should be adressed to me.
+
+Various people contributed code (see the file ChangeLog for details).
+Since I changed some of the code, all bugs are my fault and bugreports
+should be adressed to me.
 
 The binary distribution contains the API documentation, a JAR with the
 Readline class and the shared library libJavaReadline.so. It was compiled
@@ -13,6 +14,29 @@ running Linux 2.2.18 with glibc 2.2.
 
 The source distribution contains all the source (I hope this doesn't surprise
 you ;-) and a system of makefiles. You need the JDK to compile it.
+
+
+LICENSING ISSUES
+================
+
+Although JavaReadline is distributed under the LGPL, the underlying
+Readline library is GPL code. The consequence is, that any program
+linking with JavaReadline+Readline, will fall under the GPL.
+
+There is a Readline replacement called Editline with a more liberal
+license. In a future version of JavaReadline, you will have the choice
+of linking against Editline. This version should be available end of
+October 2001 latest. That version will also feature a fallback
+solution (System.in) for platforms without Readline or Editline support,
+making your programs portable again.
+
+I could not succeed to find the "official" source of Editline. There
+is a "dead" project at sourceforge. The code I got hold of is rather
+old and only implements basic readline and history functionality.
+JavaReadline currently uses far more than Editline provides.
+
+I would be grateful to anyone pointing me to the current maintainer
+of Editline and/or a source for a current version of the code.
 
 COMPILATION
 ===========
