@@ -1,24 +1,10 @@
 Note: JPython is now Jython, and there have been
-some changes, so the following does not fully apply
-anymore. I will fix the description shortly.
+some changes, so the original description of what
+to do to make Jython work with JavaReadline
+does not apply anymore. 
 
-To use JavaReadline with JPython, you must
-replace one class (org.python.util.jpython) 
-in jpython.jar and add another one 
-(org.python.util.ReadlineConsole).
-
-The sourcecode for both files is provided
-in this package. Just compile both files and
-use the jar utility from the JDK. Note that
-the 1.2 version has an update flag (this makes
-things easier). With 1.1 you have to extract
-the whole archive, replace the given class files
-and create the archive again.
-
-Once the new jpython.jar is ready, you have to
-set the property "python.console" in your JPython
-registry to org.python.util.ReadlineConsole. As
-an alternative, you can supply this value with the
-"-Dprop=value" commandline option.
-
-
+However, there has been a posting to the jython-users 
+mailing-list describing what to do (see the file
+jython-install.txt). For Debian-users, things should
+be much simpler, because Jython is already packaged
+to use JavaReadline with EditLine as backing library.
