@@ -71,7 +71,23 @@ import java.util.*;
 */
 
 public class Readline {
+
+  /**
+     Constant to access the word-break-characters with
+     <code>getVar()</code> or <code>setVar()</code>.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>     
+  */
   
+  public final static ReadlineConstString WORD_BREAK_CHARS = 
+    new ReadlineConstString(0, new ReadlineLibrary[] 
+      {ReadlineLibrary.GnuReadline,ReadlineLibrary.Editline});
+
   /**
      The currently defined ReadlineCompleter.
   */
@@ -113,7 +129,7 @@ public class Readline {
   /**
      Load an implementing backing library. This method might throw an
      UnsatisfiedLinkError in case the native libary is not found in the
-     library path. If you want to have portable program, just catch and 
+     library path. If you want to have a portable program, just catch and 
      ignore that error. JavaReadline will then just use the pure Java fallback
      solution.
 
@@ -545,6 +561,30 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+     Set word break characters.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
+     @param wordBreakCharacters A string of word break characters
+  */
+    
+  public static void 
+    setWordBreakCharacters(String wordBreakCharacters)
+                              throws UnsupportedEncodingException {
+    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
+      setWordBreakCharactersImpl(wordBreakCharacters);
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
      Query word break characters.
 
      <p>Supporting implementations:
@@ -594,30 +634,6 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-     Set word break characters.
-
-     <p>Supporting implementations:
-        <ul>
-	  <li>GNU-Readline</li>
-	  <li>Editline</li>
-        </ul>
-     </p>
-
-     @param wordBreakCharacters A string of word break characters
-  */
-    
-  public static void 
-    setWordBreakCharacters(String wordBreakCharacters)
-                              throws UnsupportedEncodingException {
-    if (iLib == ReadlineLibrary.GnuReadline || iLib == ReadlineLibrary.Editline)
-      setWordBreakCharactersImpl(wordBreakCharacters);
-    else if (iThrowException)
-      throw new UnsupportedOperationException();
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
      Configure behavior in case an unsupported method is called. If argument
      is true, unsupported methods throw an UnsupportedOperationException.
 
@@ -662,6 +678,82 @@ public class Readline {
 
   public static String getEncoding() {
    return iEncoding;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Set integer readline-variable.
+
+     @param c symbolic constant of readline-variable
+     @param value new value of readline-variable
+     @return old value of readline-variable
+  */
+
+  public static int setVar(ReadlineConstInt c, int value) {
+    if (c.isSupported(iLib))
+      return setVarIntImpl(c.getNumber(),value);
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    else
+      return Integer.MIN_VALUE;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Query integer readline-variable.
+
+     @param c symbolic constant of readline-variable
+     @return value of variable
+  */
+
+  public static int getVar(ReadlineConstInt c) {
+    if (c.isSupported(iLib))
+      return getVarIntImpl(c.getNumber());
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    else
+      return Integer.MIN_VALUE;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Set string readline-variable.
+
+     @param c symbolic constant of readline-variable
+     @param value new value of readline-variable
+     @return old value of readline-variable
+  */
+
+  public static String setVar(ReadlineConstString c, String value) throws 
+                                                UnsupportedEncodingException {
+    if (c.isSupported(iLib))
+      return setVarStringImpl(c.getNumber(),value);
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    else
+      return null;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Query string readline-variable.
+
+     @param c symbolic constant of readline-variable
+     @return value of variable
+  */
+
+  public static String getVar(ReadlineConstString c) throws 
+                                                UnsupportedEncodingException {
+    if (c.isSupported(iLib))
+      return getVarStringImpl(c.getNumber());
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    else
+      return null;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -837,5 +929,50 @@ public class Readline {
 
   private native static void 
     setWordBreakCharactersImpl(String wordBreakCharacters)
+                              throws UnsupportedEncodingException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of setVar(ReadlineConstInt,int)
+
+     @see 
+   org.gnu.readline.Readline#setVar(ReadlineConstInt,int)
+  */
+
+  private native static int setVarIntImpl(int number,int value);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getVar(ReadlineConstInt)
+
+     @see 
+   org.gnu.readline.Readline#getVar(ReadlineConstInt)
+  */
+
+  private native static int getVarIntImpl(int number);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of setVar(ReadlineConstString,String)
+
+     @see 
+   org.gnu.readline.Readline#setVar(ReadlineConstString,String)
+  */
+
+  private native static String setVarStringImpl(int number,String value)
+                              throws UnsupportedEncodingException;
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getVar(ReadlineConstString)
+
+     @see 
+   org.gnu.readline.Readline#getVar(ReadlineConstString)
+  */
+
+  private native static String getVarStringImpl(int number)
                               throws UnsupportedEncodingException;
 }
