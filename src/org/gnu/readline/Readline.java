@@ -53,6 +53,13 @@ public class Readline {
 
   private static BufferedReader iReader = null;
 
+  /**
+     Configuration flag: throw an UnsupportedMethodError, if true. This
+     value defaults to false.
+  */
+
+  private static boolean iThrowError = false;
+
   /////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -225,6 +232,34 @@ public class Readline {
                               throws UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       setWordBreakCharactersImpl(wordBreakCharacters);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Configure behavior in case an unsupported method is called. If argument
+     is true, unsupported methods throw an UnsupportedMethodError.
+
+     @param flag configuration flag
+     @see org.gnu.readline.UnsupportedMethodError
+  */
+
+  public void setThrowErrorOnUnsupportedMethod(boolean flag) {
+    iThrowError = flag;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Query behavior in case an unsupported method is called.
+
+     @return configuration flag
+     @see
+       org.gnu.readline.Readline#setThrowErrorOnUnsupportedMethod(boolean flag)
+  */
+
+  public boolean getThrowErrorOnUnsupportedMethod() {
+    return iThrowError;
   }
 
   /////////////////////////////////////////////////////////////////////////////
