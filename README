@@ -2,10 +2,17 @@ This is my "port" of GNU-Readline to Java. Actually, it is a crude wrapper
 using the Java Native Interface (JNI).
 
 This version implements basic readline functionality like line editing and
-filename completion, which should be just enough for normal use. More specific
-readline functionality like custom completers (if you don't know what it is
-you don't need it) might be implemented in a future version (as soon as I
-figure out what has to be done).
+filename completion, which should be just enough for normal use.
+Code for custom completers and history file reading/writing was provided
+by erik (erik@skiinfo.fr). Since I changed some of the code, all bugs
+are my fault and bugreports should be adressed to me.
+
+The binary distribution contains the API documentation, a JAR with the
+Readline class and the shared library libJavaReadline.so. It was compiled
+running Linux 2.2.18 with glibc 2.2.
+
+The source distribution contains all the source (I hope this doesn't surprise
+you ;-) and a system of makefiles. You need the JDK to compile it.
 
 COMPILATION
 ===========
@@ -28,9 +35,8 @@ LD_LIBRARY_PATH=/usr/lib java -cp java_readline.jar org.foo.bar.MyClass
 
 assuming that you put libJavaReadline.so into /usr/lib.
 
-If you think you found a bug or want to contribute a version (a different
-makefile should do) for one of Bill's operating systems (a different
-makefile should do) please drop me a note.
+If you think you found a bug or want to contribute some code please drop 
+me a note.
 
 Bernhard Bablok
 mail@bablokb.de
