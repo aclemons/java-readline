@@ -1,0 +1,34 @@
+IMPORTANT NOTE
+==============
+
+From 0.5.2 to 0.6 there have been two incompatible interface changes:
+
+1. You must call Readline.load(ReadlineLibrary lib); before using any
+   other methods.
+=====================================================================
+
+If you omit the call to the load()-method, the pure Java fallback
+solution is used. Possible values for lib are:
+
+ReadlineLibrary.PureJava
+ReadlineLibrary.GnuReadline
+ReadlineLibrary.Editline
+
+Note that all programs using Gnu-Readline will fall under the GPL,
+since Gnu-Readline is GPL software.
+
+If you want to write portable programs and you are not sure if
+GnuReadline/Editline is available on all target machines, use code like
+
+try {
+  Readline.load(ReadlineLibrary.GnuReadline);
+} catch (Exception e) {
+}
+
+
+2. Readline.readline() now additionally throws an IOException
+=============================================================
+
+This is due to the fact that starting from 0.6 the pure Java fallback
+solution is supported. Using the native libraries, you should never
+see this exception, nevertheless you will have to deal with it.
