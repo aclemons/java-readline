@@ -1,3 +1,10 @@
+For release 0.5:
+	- added code for reading/writing history files
+	  (provided by erik@skiinfo.fr)
+	- added code for setting a custom completer
+	  (provided by erik@skiinfo.fr)
+	- added a sample custom completer
+	- changed ReadlineTest to include new methods
 For release 0.43:
 	- rewrote makefile(s)
 	- changed directory structure
