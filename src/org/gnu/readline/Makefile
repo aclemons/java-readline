@@ -26,3 +26,5 @@
 #
 
 include $(SRCROOT)/mkrules.inc
+
+$(PACKDIR)/Readline.class: $(PACKDIR)/ReadlineLibrary.class
