@@ -43,7 +43,7 @@ DFOOTER    = "<strong>$(NAME), Version $(VERSION)</strong>"
 PACKROOT  := 
 SUBDIRS    = src etc
 PACKAGES  := test org.gnu.readline
-BIN_ADD   := libJavaReadline.so
+BIN_ADD    = libJavaReadline.so $(APIDIR)
 MF_STUB   := etc/manifest.stub
 
 # native stuff
@@ -84,7 +84,7 @@ apidoc: $(APIDIR)
                 -bottom $(DBOTTOM) \
                 -version -author -private $(patsubst %,$(PACKROOT)%,$(PACKAGES))
 
-bin-dist: jar
+bin-dist: jar apidoc
 	tar -czf $(TARGET)-$(VERSION)-bin.tgz --exclude "CVS" \
             $(README) $(TODO) $(CHANGELOG) $(LICENSE) $(JAR) $(BIN_ADD)
 	-rm -fr $(TARGET)-$(VERSION)
@@ -120,7 +120,7 @@ $(METADIR):
 test: jar
 	LD_LIBRARY_PATH=$(ROOTDIR) java -jar $(JAR) src/test/tinputrc
 clean:
-	-rm -fr $(JAR) $(TARGET)-*.tgz $(APIDIR) $(BUILDDIR)
+	-rm -fr $(JAR) $(TARGET)-*.tgz $(APIDIR) $(BUILDDIR) .rltest_history
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
