@@ -11,6 +11,8 @@
 /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 /**************************************************************************/
 
+package test;
+
 /**
  * ReadlineTest.java
  * 
