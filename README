@@ -1,6 +1,5 @@
-This is my "port" of GNU-Readline. Actually, it is a crude wrapper using the 
-Java Native Interface (JNI). It requires a shared library libJavaReadline.so
-in your library search path LD_LIBRARY_PATH.
+This is my "port" of GNU-Readline to Java. Actually, it is a crude wrapper 
+using the Java Native Interface (JNI).
 
 This version implements basic readline functionality like line editing and
 filename completion, which should be just enough for normal use. More specific
@@ -8,11 +7,32 @@ readline functionality like custom completers (if you don't know what it is
 you don't need it) might be implemented in a future version (as soon as I
 figure out what has to be done).
 
-See the file INSTALL for details about compiling and installing the wrapper
-code.
+COMPILATION
+===========
+
+Compilation should be no problem. Try "make all". You should set the
+variable JAVA_HOME (or edit the makefile). Also, if you don't use jikes,
+you should change the variables JAVAC and JAVAC_OPT in the makefile. A better
+alternative is to install jikes, it will speed up your development by
+a factor of 2-3.
+
+INSTALLATION
+============
+
+Copy the file libJavaReadline.so to one of your library directories or add
+the directory where you put libJavaReadline.so to LD_LIBARY_PATH. Also, add
+java_readline.jar to your CLASSPATH. After building the jar and the shared
+library, you can run a program with something like:
+
+LD_LIBRARY_PATH=/usr/lib java -cp java_readline.jar org.foo.bar.MyClass
+
+assuming that you put libJavaReadline.so into /usr/lib.
 
 If you think you found a bug or want to contribute a version (a different
-makefile should do) for one of Bill's operating systems please drop me a 
-note.
+makefile should do) for one of Bill's operating systems (a different
+makefile should do) please drop me a note.
 
-Bernhard Bablok (bablokb@gmx.de), November 1998
+Bernhard Bablok
+mail@bablokb.de
+http://www.bablokb.de
+
