@@ -378,9 +378,9 @@ public class Interpreter
                 }
                 // should I wrap CommandLineReader around it?
                 if (history.canWrite() && history.canRead()) {
-                    in = new ReadlineReader("bsh % ", history);
+                    in = new ReadlineReader("bsh % ", history,ReadlineLibrary.Editline);
                 } else {
-                    in = new ReadlineReader("bsh % ");
+                    in = new ReadlineReader("bsh % ",ReadlineLibrary.Editline);
                     debug("Unable to read/write history file: " + history.getAbsolutePath());
                 }
             } catch (IOException ioe) {
