@@ -1,3 +1,7 @@
+Note: JPython is now Jython, and there have been
+some changes, so the following does not fully apply
+anymore. I will fix the description shortly.
+
 To use JavaReadline with JPython, you must
 replace one class (org.python.util.jpython) 
 in jpython.jar and add another one 
