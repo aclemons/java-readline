@@ -61,11 +61,25 @@ public class ReadlineTest {
       System.out.println(e.toString());    // from /etc/inputrc and ~/.inputrc
 	System.exit(0);
     }
+
+    // read history file, if available
+
+    File history = new File(".rltest_history");
+    try {
+      if (history.exists())
+	Readline.readHistoryFile(history.getName());
+    } catch (Exception e) {
+      System.err.println("Error reading history file!");
+    }
       
     // define some additional function keys
 
     Readline.parseAndBind("\"\\e[18~\":	\"Function key F7\"");
     Readline.parseAndBind("\"\\e[19~\":	\"Function key F8\"");
+
+    // set test completer
+
+    Readline.setCompleter(new TestCompleter());
 
     while (true) {
       try {
@@ -74,8 +88,14 @@ public class ReadlineTest {
 	  System.out.println("no input");
 	else
 	  System.out.println("line = >" + line + "<");
-      } catch (IOException e) {
-	System.out.println(e.toString());
+      } catch (UnsupportedEncodingException enc) {
+	  System.err.println("caught UnsupportedEncodingException");
+      } catch (EOFException eof) {
+	try {
+	  Readline.writeHistoryFile(history.getName());
+	} catch (Exception e) {
+	  System.err.println("Error writing history file!");
+	}
 	System.exit(0);
       }
     }
