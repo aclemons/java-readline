@@ -1,0 +1,22 @@
+*** jpython.java	Sun Oct 24 08:54:59 1999
+--- jpython.java.orig	Sun Oct 24 08:53:46 1999
+***************
+*** 80,91 ****
+          
+          // Now create an interpreter
+!         InteractiveConsole interp = null;
+! 	try {
+! 	  interp = (InteractiveConsole) Class.forName(
+! 		      PySystemState.registry.getProperty("python.console",
+!                         "org.python.util.InteractiveConsole")).newInstance();
+! 	} catch (Exception e) {
+! 	  interp = new InteractiveConsole();
+! 	}
+          //System.err.println("interp");
+          PyModule mod = imp.addModule("__main__");
+--- 80,84 ----
+          
+          // Now create an interpreter
+!         InteractiveConsole interp = new InteractiveConsole();
+          //System.err.println("interp");
+          PyModule mod = imp.addModule("__main__");
