@@ -28,6 +28,32 @@ import java.io.*;
  uses native method calls if available, otherwise it defaults to normal
  I/O using a BufferedReader. 
 
+ <p>A typical implementation could look like:
+<pre>
+try {
+  Readline.load(ReadlineLibrary.GnuReadline);
+} catch (Exception e) {
+}
+Readline.initReadline("myapp");
+
+while (true) {
+  try {
+    line = Readline.readline("myprompt> ");
+    if (line == null)
+       System.out.println("no input");
+    else
+       processLine();
+  } catch (EOFException e) {
+    break;
+  } catch (Exception e) {
+    doSomething();
+  }
+}
+</pre>
+
+ <p>Note that the fallback solution does not throw an EOFException, you
+ therefore need some other means of deciding when to stop.
+
  @version $Revision$
  @author  $Author$
 */
@@ -65,7 +91,9 @@ public class Readline {
   /**
      Load an implementing backing library. This method might throw an
      UnsatisfiedLinkError in case the native libary is not found in the
-     library path.
+     library path. If you want to have portable program, just catch and 
+     ignore that error. JavaReadline will then just use the pure Java fallback
+     solution.
 
      @param lib An object (constant) of type ReadlineLibrary
      @see org.gnu.readline.ReadlineLibrary
