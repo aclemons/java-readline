@@ -28,6 +28,9 @@
  * $Author$
  */
 
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include "org_gnu_readline_Readline.h"
 
 #ifdef JavaReadline
@@ -47,7 +50,9 @@
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Global buffer. The buffer is allocated when needed and grows in steps of   */
@@ -95,14 +100,15 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
 #endif
 #ifndef JavaGetline
    rl_initialize();
-   using_history();
 #endif
+   using_history();
 }
 
 /* -------------------------------------------------------------------------- */
 /* Reset readline's internal states and terminal.
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_cleanupReadlineImpl
                               (JNIEnv *env, jclass theClass) {
 #ifdef JavaReadline
@@ -110,16 +116,19 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_cleanupReadlineImpl
     rl_cleanup_after_signal();
 #endif
 }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
 /* Report, if we have a terminal
 /* -------------------------------------------------------------------------- */
 
+#ifndef JavaGetline
 JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_hasTerminalImpl
                               (JNIEnv *env, jclass theClass) {
     return (jboolean) (isatty( STDIN_FILENO ) ? JNI_TRUE : JNI_FALSE);
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Add line to history                                                        */
@@ -636,3 +645,10 @@ int allocBuffer(size_t newSize) {
   bufLength = newSize;
   return 0;
 }
+
+#ifdef WIN32
+int WINAPI
+readline_init(HANDLE h, DWORD reason, void *foo) {
+  return 1;
+}
+#endif

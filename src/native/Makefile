@@ -27,21 +27,44 @@
 # $Revision$
 #
 
+export 
+
 .PHONY: org_gnu_readline_Readline.o
 
 ROOTDIR=../..
 BUILDDIR=$(ROOTDIR)/build
 
+ifeq (MSC,$(WIN32))
+INCLUDES = -I "c:/Programme/DevStudio/VC/include" \
+			-I $(JAVAINCLUDE) -I $(JAVANATINC)
+LIB = "c:/Programme/DevStudio/VC/lib"
+CC = cl
+OBJ_EXT := obj
+LIB_PRE := 
+LIB_EXT := dll
+CFLAGS=-DWIN32=$(WIN32) -D__IBMC__
+else
 INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
 LIBPATH           = -L/usr/lib/termcap 
 JavaReadline_LIBS = -lreadline -ltermcap -lhistory
 JavaEditline_LIBS = -ledit -ltermcap
+JavaGetline_LIBS = -lcygwin
 CC = gcc
-CFLAGS=-fPIC
+OBJ_EXT := o
+LIB_PRE := lib
+LIB_EXT := so
+CFLAGS=-fPIC -DPOSIX
+endif
+
+
+OBJECTS := org_gnu_readline_Readline.$(OBJ_EXT)
+ifeq ($(TG),JavaGetline)
+OBJECTS += getline.$(OBJ_EXT)
+endif
 
 all: $(T_LIBS) 
 
-lib: $(ROOTDIR)/lib$(TG).so  
+lib: $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT)
 
 JavaReadline:
 	make TG=$@ lib
@@ -52,26 +75,42 @@ JavaEditline:
 JavaGetline:
 	make TG=$@ lib
 
-OBJECTS := org_gnu_readline_Readline.o
-ifeq ($(TG),JavaGetline)
-OBJECTS += getline.o
-CFLAGS += -DPOSIX
+$(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT): $(OBJECTS)
+ifeq (MSC,$(WIN32))
+	$(CC) $(INCLUDES) -LD $(OBJECTS) -Fe$@
+else
+ifeq (CYGWIN,$(WIN32))
+	$(CC) -s -W1,--base-file,$(ROOTDIR)/lib$(TG).base -o $@ \
+		$(OBJECTS) -W1,-e,_readline_init@12
+	dlltool --base-file $(ROOTDIR)/lib$(TG).base \
+		--def $(ROOTDIR)/lib$(TG).def \
+		--output-exp $(ROOTDIR)/lib$(TG).exp \
+		--dllname $(ROOTDIR)/lib$(TG).dll
+	$(CC) -s -W1,--base-file $(ROOTDIR)/lib$(TG).base,$(ROOTDIR)/lib$(TG).exp \
+		-o $@ $(OBJECTS) -W1,-e,_readline_init@12
+	dlltool --base-file $(ROOTDIR)/lib$(TG).base \
+		--def $(ROOTDIR)/lib$(TG).def \
+		--output-exp $(ROOTDIR)/lib$(TG).exp \
+		--dllname $(ROOTDIR)/lib$(TG).dll
+	$(CC) -W1,$(ROOTDIR)/lib$(TG).exp -o $@ \
+		$(OBJECTS) -W1,-e,_readline_init@12
+else
+	$(CC) -shared $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
+endif
 endif
 
-$(ROOTDIR)/lib$(TG).so: $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
+getline.$(OBJ_EXT): getline.c
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) -c getline.c
 
-org_gnu_readline_Readline.o: org_gnu_readline_Readline.h \
-	                                             org_gnu_readline_Readline.c
+org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h \
+	                                      org_gnu_readline_Readline.c
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
-	                                          -c org_gnu_readline_Readline.c
+	                                   -c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
 
-getline.o: getline.c
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) -c getline.c
-
 clean:
-	-rm -f org_gnu_readline_Readline.h org_gnu_readline_Readline.o getline.o
+	-rm -f org_gnu_readline_Readline.h \
+		org_gnu_readline_Readline.$(OBJ_EXT) getline.$(OBJ_EXT)
