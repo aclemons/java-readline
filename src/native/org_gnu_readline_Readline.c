@@ -61,6 +61,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
      rl_readline_name = strdup("JAVA");
    if (is_copy == JNI_TRUE)
     (*env)->ReleaseStringUTFChars(env, jappName, appName);
+   rl_initialize();
    using_history();
 }
 
