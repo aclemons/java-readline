@@ -443,7 +443,11 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
       rl_completion_entry_function = NULL;
       return;
     }
+#ifdef JavaEditline
+    rl_completion_entry_function = (CPFunction *) java_completer;
+#else
     rl_completion_entry_function = (rl_compentry_func_t *) java_completer;
+#endif
   }
   else {
     rl_completion_entry_function = NULL;
