@@ -87,7 +87,7 @@ apidoc: $(APIDIR)
 	javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
                 -doctitle $(DTITLE) -footer $(DFOOTER) -header $(DHEADER) \
                 -bottom $(DBOTTOM) \
-                -version -author -private $(patsubst %,$(PACKROOT)%,$(PACKAGES))
+                -version -author $(patsubst %,$(PACKROOT)%,$(PACKAGES))
 
 bin-dist: jar apidoc
 	tar -czf $(TARGET)-$(VERSION)-bin.tgz --exclude "CVS" $(BIN_ADD)
