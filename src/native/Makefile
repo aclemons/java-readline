@@ -27,7 +27,7 @@
 # $Revision$
 #
 
-.PHONY: all lib clean clean_o
+.PHONY: all lib clean
 
 SO := $(patsubst %,$(ROOTDIR)/lib%.so,$(T_LIBS))
 
@@ -38,20 +38,14 @@ lib: $(ROOTDIR)/lib$(TG).so
 Java%:
 	make TG=$@ lib
 
-$(ROOTDIR)/lib%.so: clean_o org_gnu_readline_Readline.o
-	gcc -shared $(LIBPATH) $($(TG)_LIBS) org_gnu_readline_Readline.o -o $@
-
-org_gnu_readline_Readline.o: org_gnu_readline_Readline.c \
-                                                   org_gnu_readline_Readline.h
+$(ROOTDIR)/lib%.so: org_gnu_readline_Readline.c org_gnu_readline_Readline.h
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
 	-c org_gnu_readline_Readline.c
+	gcc -shared $(LIBPATH) $($(TG)_LIBS) org_gnu_readline_Readline.o -o $@
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	javah -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
-
-clean_o:
-	-rm -f org_gnu_readline_Readline.o
 
 clean:
 	-rm -f $(SO) org_gnu_readline_Readline.h org_gnu_readline_Readline.o
