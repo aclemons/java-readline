@@ -1,0 +1,5 @@
+$if ReadlineTest
+"\e[14~":	"Function key F4"
+"\e[15~":	"Function key F5"
+"\e[17~":	"Function key F6"
+$endif
