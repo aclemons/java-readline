@@ -90,14 +90,34 @@ public class ReadlineTest {
 
     // Set word break characters
     try {
-      Readline.setVar(Readline.WORD_BREAK_CHARS," \t;");
+      String breakChars = 
+	Readline.getVar(Readline.RL_COMPLETER_WORD_BREAK_CHARACTERS);
+      System.out.println("word-break-chars: " + breakChars);
+      breakChars = 
+	Readline.setVar(Readline.RL_COMPLETER_WORD_BREAK_CHARACTERS,"abc");
+      System.out.println("word-break-chars: " + breakChars);
+      breakChars = 
+	Readline.getVar(Readline.RL_COMPLETER_WORD_BREAK_CHARACTERS);
+      System.out.println("word-break-chars: " + breakChars);
       Readline.setWordBreakCharacters(" \t;");
-    }
-    catch (UnsupportedEncodingException enc) {
-        System.err.println("Could not set word break characters");
-        System.exit(0);
+      breakChars = 
+	Readline.getVar(Readline.RL_COMPLETER_WORD_BREAK_CHARACTERS);
+      System.out.println("word-break-chars: " + breakChars);
+    } catch (UnsupportedEncodingException enc) {
+      System.err.println("Could not set word break characters");
+      System.exit(0);
     }
 
+    // query version
+
+    try {
+      String version = Readline.getVar(Readline.RL_LIBRARY_VERSION);
+      System.out.println("Readline-Version: " + version);
+    } catch (UnsupportedEncodingException enc) {
+      System.err.println("Could not query libarary version");
+      System.exit(0);
+    }
+    
     // set test completer
 
     Readline.setCompleter(new TestCompleter());
