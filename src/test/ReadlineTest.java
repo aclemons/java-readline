@@ -90,7 +90,8 @@ public class ReadlineTest {
 
     // Set word break characters
     try {
-        Readline.setWordBreakCharacters(" \t;");
+      Readline.setVar(Readline.WORD_BREAK_CHARS," \t;");
+      Readline.setWordBreakCharacters(" \t;");
     }
     catch (UnsupportedEncodingException enc) {
         System.err.println("Could not set word break characters");
