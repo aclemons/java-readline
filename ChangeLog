@@ -1,3 +1,23 @@
+For release 0.7.0:
+	- bugfix: setCompleter(null) crashed the virtual machine. Now, it sets
+	  the completer back to default behaviour (filename completion)
+	- native functions added:
+	  o cleanupReadlineImpl() does a reset of the readline lib and the
+	    terminal. Exported as 'void cleanup()' to the java user.
+	  o getLineBufferImpl() returns the current line buffer. This is
+	    usually needed within completers to access the _full_ line (the
+	    completer only gets the last word). Exported as
+	    'String getLineBuffer()' to the java user.
+	- documentation: complete example for ReadlineCompleter interface;
+	  better indented example for Readline. Added cleanup() in the example.
+	- declare the 'UnsatisfiedLinkError' in the load() method for
+	  documentation purposes.
+	(all changes provided by Henner Zeller)
+	- added note about Debian-packages in README
+	- new description on how to make Jython work with JavaReadline
+	(copied from a posting of Steve Cohen <SteveC@ignitesports.com> to
+	jython-users@lists.sourceforge.net)
+	
 For release 0.6.1:
         - bugfix: fallback-solution did not throw EOFException
 	- bugfix: missing P ("ureJava") in method Readline.byName() 
