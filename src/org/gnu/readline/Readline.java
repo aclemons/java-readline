@@ -131,10 +131,13 @@ public class Readline {
 
   /**
      Display a prompt on standard output and read a string from
-     standard input. This method throws an EOFException on end-of-file (C-d).
+     standard input. This method returns 'null', if there has
+     been an empty input (user pressed just [RETURN]) and throws
+     an EOFException on end-of-file (C-d).
 
      @param prompt Prompt to display
-     @return The string the user entered
+     @return The string the user entered or 'null' if there was no input.
+     @throws EOFException on end-of-file, i.e. CTRL-d input.
   */
 
   public static String readline(String prompt) throws EOFException, 
@@ -144,9 +147,11 @@ public class Readline {
     else {
       System.out.print(prompt);
       if (iReader == null)
-	iReader = new BufferedReader(new InputStreamReader(System.in));
+        iReader = new BufferedReader(new InputStreamReader(System.in));
       String line = iReader.readLine();
-      return line;
+      if (line == null)
+        throw new EOFException("EOF");
+      return (line.length() == 0) ? null : line;
     }
   }
 
