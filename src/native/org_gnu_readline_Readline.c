@@ -2,7 +2,7 @@
  * gnu_readline_Readline.c -- implementation of the Java wrapper
  * of GNU readline.
  *
- * Java Wrapper Copyright (c) 1998 by Bernhard Bablok (bablokb@gmx.de)
+ * Java Wrapper Copyright (c) 1998-2001 by Bernhard Bablok (mail@bablokb.de)
  *
  * This program is free software; you can redistribute it and or modify
  * it under the terms of the GNU Library General Public License as published
