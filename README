@@ -1,16 +1,24 @@
 This is my "port" of GNU-Readline to Java. Actually, it is a crude wrapper 
 using the Java Native Interface (JNI).
 
+Starting from version 0.6, alternative libraries are supported. Currently
+only Editline is implemented, but adding support for other implementations
+should be easy. 
+From 0.6 on, JavaReadline also has a fallback solution (System.in) for
+platforms without Readline or Editline support, making your programs portable
+again.
+
 This version implements basic readline functionality like line editing and
-filename completion, which should be just enough for normal use.
+filename completion, which should be just enough for normal use. Not all
+functionality is available with all implementations.
 
 Various people contributed code (see the file ChangeLog for details).
 Since I changed some of the code, all bugs are my fault and bugreports
 should be adressed to me.
 
 The binary distribution contains the API documentation, a JAR with the
-Readline class and the shared library libJavaReadline.so. It was compiled
-running Linux 2.2.18 with glibc 2.2.
+Readline class and the shared libraries libJavaReadline.so and 
+libJavaEditline.so. It was compiled running Linux 2.2.18 with glibc 2.2.
 
 The source distribution contains all the source (I hope this doesn't surprise
 you ;-) and a system of makefiles. You need the JDK to compile it.
@@ -24,40 +32,38 @@ Readline library is GPL code. The consequence is, that any program
 linking with JavaReadline+Readline, will fall under the GPL.
 
 There is a Readline replacement called Editline with a more liberal
-license. In a future version of JavaReadline, you will have the choice
-of linking against Editline. This version should be available end of
-October 2001 latest. That version will also feature a fallback
-solution (System.in) for platforms without Readline or Editline support,
-making your programs portable again.
+license. Use that library if you want to distribute your program
+under the LGPL instead of the GPL.
 
-I could not succeed to find the "official" source of Editline. There
-is a "dead" project at sourceforge. The code I got hold of is rather
-old and only implements basic readline and history functionality.
-JavaReadline currently uses far more than Editline provides.
-
-I would be grateful to anyone pointing me to the current maintainer
-of Editline and/or a source for a current version of the code.
+You can fetch the Editline stuff at http://packages.debian.org. You
+need libedit2 and libedit-dev. Source code is also available, although
+I must admit I did not succeed in compiling it on my non-BSD and
+non-Debian system :-(
 
 COMPILATION
 ===========
 
-Compilation should be no problem. Try "make all". You should set the
+Compilation should be no problem. Try "make". You should set the
 variable JAVA_HOME (or edit the makefile). Also, if you don't use jikes,
 you should change the variables JAVAC and JAVAC_OPT in the makefile. A better
 alternative is to install jikes, it will speed up your development by
 a factor of 2-3.
 
+If you don't have the Editline libraries installed, use 
+"make T_LIBS=JavaReadline" (the default creates both JavaReadline and
+JavaEditline).
+
 INSTALLATION
 ============
 
-Copy the file libJavaReadline.so to one of your library directories or add
-the directory where you put libJavaReadline.so to LD_LIBARY_PATH. Also, add
+Copy the files libJava*.so to one of your library directories or add
+the directory where you put libJava*.so to LD_LIBARY_PATH. Also, add
 java_readline.jar to your CLASSPATH. After building the jar and the shared
 library, you can run a program with something like:
 
 LD_LIBRARY_PATH=/usr/lib java -cp java_readline.jar org.foo.bar.MyClass
 
-assuming that you put libJavaReadline.so into /usr/lib.
+assuming that you put libJava*.so into /usr/lib.
 
 If you think you found a bug or want to contribute some code please drop 
 me a note.
