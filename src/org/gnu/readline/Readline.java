@@ -22,6 +22,7 @@
 package org.gnu.readline;
 
 import java.io.*;
+import java.util.*;
 
 /**
  This class implements basic functionality of the GNU-readline interface. It
@@ -144,18 +145,44 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+     Display a prompt on standard output and read a string from standard
+     input. This method returns 'null', if there has been an empty input
+     (user pressed just [RETURN]) and throws an EOFException on end-of-file
+     (C-d). This versino of <tt>readline()</tt> automatically adds the line
+     to the in-memory history; use the other version of <tt>readline()</tt>
+     if you want explicit control over that feature.
+
+     @param prompt Prompt to display
+     @return The string the user entered or 'null' if there was no input.
+     @throws EOFException on end-of-file, i.e. CTRL-d input.
+     @see #readline(String,boolean)
+     @see #addHistory()
+  */
+  public static String readline(String prompt) throws EOFException,
+                                    IOException, UnsupportedEncodingException {
+      return readline(prompt, false);
+  }
+
+  /**
      Display a prompt on standard output and read a string from
      standard input. This method returns 'null', if there has
      been an empty input (user pressed just [RETURN]) and throws
      an EOFException on end-of-file (C-d).
 
-     @param prompt Prompt to display
+     @param prompt    Prompt to display
+     @param addToHist <tt>true</tt> to add the line to the history
+                      automatically; <tt>false</tt> to refrain from
+                      adding the line to the history. (You can manually
+                      add the line to the history by calling
+                      <tt>addHistory()</tt>.)
      @return The string the user entered or 'null' if there was no input.
      @throws EOFException on end-of-file, i.e. CTRL-d input.
+     @see #readline(String)
+     @see #addHistory()
   */
 
-  public static String readline(String prompt) throws EOFException, 
-                                    IOException, UnsupportedEncodingException {
+  public static String readline(String prompt, boolean addToHist)
+               throws EOFException, IOException, UnsupportedEncodingException {
     if (iLib != ReadlineLibrary.PureJava)
       return readlineImpl(prompt);
     else {
@@ -165,8 +192,97 @@ public class Readline {
       String line = iReader.readLine();
       if (line == null)
         throw new EOFException("EOF");
-      return (line.length() == 0) ? null : line;
+      if (line.length() == 0)
+          line = null;
+      if ((line != null) && (addToHist))
+          addToHistory(line);
+      return line;
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Add a line to the in-memory history.
+
+     @param line  The line to add to the history
+     @throws UnsupportOperationException if underlying library doesn't support
+                                         a history
+  */
+
+  public static void addToHistory(String line) {
+      if (iLib == ReadlineLibrary.GnuReadline)
+        addToHistoryImpl(line);
+      else if (iThrowException)
+      throw new UnsupportedOperationException();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Get the history buffer in a supplied <tt>Collection</tt>.
+
+     @param collection  where to store the history
+     @throws UnsupportOperationException if underlying library doesn't support
+                                         a history
+  */
+
+  public static void getHistory(Collection collection) {
+      if (iLib == ReadlineLibrary.GnuReadline)
+        getHistoryImpl(collection);
+      else if (iThrowException)
+        throw new UnsupportedOperationException();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Get the size, in elements (lines), of the history buffer.
+
+     @return the number of lines in the history buffer
+  */
+  public static int getHistorySize() {
+      int result = 0;
+      if (iLib == ReadlineLibrary.GnuReadline)
+        result = getHistorySizeImpl();
+      else if (iThrowException)
+        throw new UnsupportedOperationException();
+      return result;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Clear the history buffer.
+  */
+  public static void clearHistory() {
+      if (iLib == ReadlineLibrary.GnuReadline)
+        clearHistoryImpl();
+      else if (iThrowException)
+        throw new UnsupportedOperationException();
+  }      
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Get the specified entry from the history buffer. History buffer entries
+     are numbered from 0 through (<tt>getHistorySize() - 1</tt>), with the
+     oldest entry at index 0.
+
+     @param i  the index of the entry to return
+     @return the line at the specified index in the history buffer
+     @throws ArrayIndexOutOfBoundsException index out of range
+  */
+  public static String getHistoryLine(int i) {
+    String s = null;
+    if (iLib == ReadlineLibrary.GnuReadline) {
+      if ((i < 0) || i >= getHistorySize())
+        throw new ArrayIndexOutOfBoundsException(i);
+      s = getHistoryLineImpl(i);
+    }
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    return s;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -409,6 +525,56 @@ public class Readline {
 
   private native static String readlineImpl(String prompt)
                               throws EOFException, UnsupportedEncodingException;
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of addToHistory
+
+     @see org.gnu.readline.Readline#addToHistory(String line)
+  */
+
+  private native static void addToHistoryImpl(String line);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getHistory
+
+     @see org.gnu.readline.Readline#getHistory()
+  */
+
+  private native static void getHistoryImpl(Collection collection);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getHistorySize
+
+     @see org.gnu.readline.Readline#getHistorySize()
+  */
+
+  private native static int getHistorySizeImpl();
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getHistoryLine
+
+     @see org.gnu.readline.Readline#getHistoryLine()
+  */
+
+  private native static String getHistoryLineImpl(int i);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of clearHistory
+
+     @see org.gnu.readline.Readline#clearHistory()
+  */
+
+  private native static void clearHistoryImpl();
 
   /////////////////////////////////////////////////////////////////////////////
 

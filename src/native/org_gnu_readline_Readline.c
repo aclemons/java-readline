@@ -99,6 +99,35 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_hasTerminalImpl
 }
 
 /* -------------------------------------------------------------------------- */
+/* Add line to history                                                        */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_addToHistoryImpl
+                               (JNIEnv *env, jclass theClass, jstring jline) {
+
+  const char *line;
+  char buffer[BUF_LENGTH];
+  jboolean is_copy;
+
+  line = (*env)->GetStringUTFChars(env,jline,&is_copy);
+  if (!utf2ucs(line,buffer,BUF_LENGTH)) {
+    jclass newExcCls;
+    if (is_copy == JNI_TRUE)
+      (*env)->ReleaseStringUTFChars(env, jline, line);
+    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;
+  }
+
+  if (is_copy == JNI_TRUE)
+    (*env)->ReleaseStringUTFChars(env, jline, line);
+
+  add_history(buffer);
+  return;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Prompt for input. "Main" readline function.          .                     */
 /* -------------------------------------------------------------------------- */
 
@@ -135,13 +164,69 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
       (*env)->ThrowNew(env,newExcCls,"");
     return NULL;
   } else if (*input) {
-    add_history(input);
     ucs2utf(input,buffer,BUF_LENGTH);
     return (*env)->NewStringUTF(env,buffer);
   } else
     return NULL;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Get current history buffer                                                 */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
+                                (JNIEnv *env, jclass theClass, jobject jcoll) {
+  jclass cls;
+  jmethodID mid;
+  HIST_ENTRY **hist;
+  jstring jline;
+
+  cls = (*env)->GetObjectClass(env,jcoll);
+  mid = (*env)->GetMethodID(env,cls,"add","(Ljava/lang/Object;)Z");
+  hist = history_list();
+  if (hist != NULL) {
+    while (*hist != NULL) {
+      jline = (*env)->NewStringUTF(env,(*hist)->line);
+      (*env)->CallBooleanMethod(env,jcoll,mid,jline);
+      hist++;
+    }
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Clear the current history buffer                                           */
+/* -------------------------------------------------------------------------- */
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_clearHistoryImpl
+                                               (JNIEnv *env, jclass theClass) {
+  clear_history();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Get nth entry from history file                                            */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getHistoryLineImpl
+                                       (JNIEnv *env, jclass theClass, jint i) {
+  char buffer[BUF_LENGTH];
+  HIST_ENTRY *hist = NULL;
+
+  if ((hist = history_get ((int) (i + 1))) != NULL) {
+    char buffer[BUF_LENGTH];
+    ucs2utf(hist->line,buffer,BUF_LENGTH);
+    return (*env)->NewStringUTF(env,buffer);
+  }
+
+  return NULL;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Get the size of the history buffer.                                        */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jint JNICALL Java_org_gnu_readline_Readline_getHistorySizeImpl
+                                               (JNIEnv *env, jclass theClass) {
+  return (jint) history_length;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Read keybindings from file.                                                */
