@@ -271,7 +271,7 @@ char *java_completer(char *text, int state) {
 /* Install completer object                                                   */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_installCompleterImpl
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
                                       (JNIEnv *env, jclass class, jobject obj) {
   
 /*   completer_cls = (*env)->GetObjectClass(env, compl); */
