@@ -27,4 +27,5 @@
 
 include $(SRCROOT)/mkrules.inc
 
-$(PACKDIR)/Readline.class: $(PACKDIR)/ReadlineLibrary.class
+$(PACKDIR)/Readline.class: $(PACKDIR)/ReadlineLibrary.class \
+		$(PACKDIR)/UnsupportedMethodError.class	
