@@ -41,6 +41,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define BUF_LENGTH  1024
 
@@ -81,10 +82,21 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
 
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_cleanupReadlineImpl
                               (JNIEnv *env, jclass theClass) {
+#ifdef JavaReadline
     rl_free_line_state();
     rl_cleanup_after_signal();
+#endif
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Report, if we have a terminal
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_hasTerminalImpl
+                              (JNIEnv *env, jclass theClass) {
+    return (jboolean) (isatty( STDIN_FILENO ) ? JNI_TRUE : JNI_FALSE);
+}
 
 /* -------------------------------------------------------------------------- */
 /* Prompt for input. "Main" readline function.          .                     */
