@@ -1,0 +1,77 @@
+Todo Checklist for new Java-Readline Releases
+=============================================
+
+1. Update ChangeLog
+-------------------
+
+rcs2log > ChangeLog.add
+
+cat ChangeLog.add ChangeLog > ChangeLog.new
+mv -f ChangeLog.new ChangeLog
+rm ChangeLog.add
+
+Edit users + mail-addresses
+
+
+2. Update NEWS
+--------------
+
+add most significant news
+
+
+3. Update web/index.html
+------------------------
+
+Change current version number
+
+
+4. Commit everything and tag
+----------------------------
+
+cvs commit -m "prepared new release x.x.x"
+cvs tag "R_x_x_x"
+
+
+5. Create distribution-files
+----------------------------
+
+make src-dist
+make rpm
+
+
+6. Upload packages
+------------------
+
+ftp to upload.sourceforge.net
+cd /incoming
+bin
+put ...
+
+
+7. Create Release
+-----------------
+
+Follow instructions under Admin -> Edit/Add release
+
+
+8. Upload web
+-------------
+
+scp misc/index.html \
+  <loginname>@shell.sourceforge.net:/home/groups/java-readline/htdocs/
+
+
+9. Post news on SourceForge
+---------------------------
+
+Use "News"
+
+
+10. Update Freshmeat
+--------------------
+
+-> Bernhard
+
+
+11. Mail to Java-readline-announce
+----------------------------------
