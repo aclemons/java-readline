@@ -6,3 +6,5 @@
 #
 
 include $(SRCROOT)/mkrules.inc
+
+$(PACKDIR)/ReadlineTest.class: $(PACKDIR)/TestCompleter.class
