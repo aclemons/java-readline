@@ -203,7 +203,7 @@ public class Readline {
       if (iReader == null) {
 	if (iEncoding == null)
 	  iReader = new BufferedReader(new InputStreamReader(System.in));
-	else {
+	else
 	  iReader = new BufferedReader(
 	    new InputStreamReader(System.in, iEncoding));
       }
