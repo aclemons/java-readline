@@ -30,29 +30,40 @@ import java.io.*;
 
  <p>A typical implementation could look like:
 <pre>
-try {
-  Readline.load(ReadlineLibrary.GnuReadline);
-} catch (Exception e) {
-}
-Readline.initReadline("myapp");
+ try {
+     Readline.load(ReadlineLibrary.GnuReadline);
+ }
+ catch (UnsatisfiedLinkError ignore_me) {
+     System.err.println("couldn't load readline lib. Using simple stdin.");
+ }
 
-while (true) {
-  try {
-    line = Readline.readline("myprompt> ");
-    if (line == null)
-       System.out.println("no input");
-    else
-       processLine();
-  } catch (EOFException e) {
-    break;
-  } catch (Exception e) {
-    doSomething();
-  }
-}
+ Readline.initReadline("myapp");
+
+ Runtime.getRuntime()                       // if your version supports
+   .addShutdownHook(new Thread() {          // addShutdownHook (since 1.3)
+      public void run() {
+        Readline.cleanup();
+      }
+    });
+
+ while (true) {
+     try {
+         line = Readline.readline("myprompt> ");
+         if (line == null)
+             System.out.println("no input");
+         else
+             processLine();
+     } 
+     catch (EOFException e) {
+         break;
+     } 
+     catch (Exception e) {
+         doSomething();
+     }
+ }
+ Readline.cleanup();  // see note above about addShutdownHook
+
 </pre>
-
- <p>Note that the fallback solution does not throw an EOFException, you
- therefore need some other means of deciding when to stop.
 
  @version $Revision$
  @author  $Author$
@@ -96,10 +107,12 @@ public class Readline {
      solution.
 
      @param lib An object (constant) of type ReadlineLibrary
+     @throws UnsatisfiedLinkError if the shared library could not be
+             found. Add it to your LD_LIBRARY_PATH.
      @see org.gnu.readline.ReadlineLibrary
   */
 
-  public static final void load(ReadlineLibrary lib) {
+  public static final void load(ReadlineLibrary lib) throws UnsatisfiedLinkError {
     if (lib == iLib)     // ok, since objects are immutable
       return;
     if (lib == ReadlineLibrary.PureJava) {
@@ -123,8 +136,9 @@ public class Readline {
   */
 
   public static void initReadline(String applicationName) {
-    if (iLib != ReadlineLibrary.PureJava)
+    if (iLib != ReadlineLibrary.PureJava) {
       initReadlineImpl(applicationName);
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -228,15 +242,17 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-     Set your completer function.
+     Set your completer implementation. Setting this to <code>null</code>
+     will result in the default behaviour of readline which is filename
+     completion.
 
      @param rlc An object implementing the ReadlineCompleter interface
   */
     
   public static void setCompleter(ReadlineCompleter rlc) {
+    iCompleter = rlc;
     if (iLib != ReadlineLibrary.PureJava) {
-      iCompleter = rlc;
-      setCompleterImpl(rlc);
+      setCompleterImpl(iCompleter);
     } else if (iThrowException)
       throw new UnsupportedOperationException();
   }
@@ -256,6 +272,18 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+     Reset the readline library and with it, the terminal.
+  */
+    
+  public static void cleanup() {
+    if (iLib != ReadlineLibrary.PureJava) {
+      cleanupReadlineImpl();
+    }      
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
      Query word break characters.
   */
     
@@ -267,6 +295,25 @@ public class Readline {
     else
       return null;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Query the current line buffer. This returns the current content of
+     the internal line buffer. You might need this in a 
+     {@link ReadlineCompleter} implementation to access the full text
+     given so far.
+  */
+    
+  public static String getLineBuffer() {
+    if (iLib != ReadlineLibrary.PureJava)
+      return getLineBufferImpl();
+    else if (iThrowException)
+      throw new UnsupportedOperationException();
+    else
+      return null;
+  }
+
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -311,7 +358,6 @@ public class Readline {
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
 
   /**
      Native implementation of initReadline()
@@ -320,6 +366,14 @@ public class Readline {
   */
 
   private native static void initReadlineImpl(String applicationName);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     cleanup readline; reset terminal.
+  */
+
+  private native static void cleanupReadlineImpl();
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -342,6 +396,17 @@ public class Readline {
 
   private native static void readInitFileImpl(String filename)
                                                             throws IOException;
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+     Native implementation of getLineBuffer()
+
+     @see org.gnu.readline.Readline#getLineBuffer()
+  */
+
+  private native static String getLineBufferImpl();
 
   /////////////////////////////////////////////////////////////////////////////
 
