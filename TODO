@@ -1,10 +1,7 @@
+- update ReadlineReader (add ReadlineLibrary argument to contructors)
+
 - Add support for the following readline functions/variables:
   * rl_initialize
   * rl_library_version
 
 - update README for contrib/jpython
-
-- implement Editline support
-
-- implement fallback solution for plattforms not supporting
-  Readline/Editline
