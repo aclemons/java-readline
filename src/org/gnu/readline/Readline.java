@@ -59,5 +59,6 @@ public class Readline {
      @return The string the user entered
   */
 
-  public native static String readline(String prompt) throws EOFException;
+  public native static String readline(String prompt)
+                              throws EOFException, UnsupportedEncodingException;
 }
