@@ -90,8 +90,8 @@ bin-dist: jar apidoc
 	-rm -fr $(TARGET)-$(VERSION)
 	mkdir $(TARGET)-$(VERSION)
 	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-bin.tgz)
-	tar -czf $(TARGET)-$(VERSION)-bin.tgz $(TARGET)-$(VERSION)
-	-rm -fr $(TARGET)-$(VERSION)
+	tar -cjf $(TARGET)-$(VERSION)-bin.tar.bz2 $(TARGET)-$(VERSION)
+	-rm -fr $(TARGET)-$(VERSION) $(TARGET)-$(VERSION)-bin.tgz 
 
 src-dist: clean
 	tar -czf $(TARGET)-$(VERSION)-src.tgz --exclude "CVS" \
@@ -100,8 +100,8 @@ src-dist: clean
 	-rm -fr $(TARGET)-$(VERSION)
 	mkdir $(TARGET)-$(VERSION)
 	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-src.tgz)
-	tar -czf $(TARGET)-$(VERSION)-src.tgz $(TARGET)-$(VERSION)
-	rm -fr $(TARGET)-$(VERSION)
+	tar -cjf $(TARGET)-$(VERSION)-src.tar.bz2 $(TARGET)-$(VERSION)
+	rm -fr $(TARGET)-$(VERSION) $(TARGET)-$(VERSION)-src.tgz 
 
 subdirs: $(BUILDDIR) $(METADIR) $(SUBDIRS)
 
@@ -120,7 +120,7 @@ $(METADIR):
 test: jar
 	LD_LIBRARY_PATH=$(ROOTDIR) java -jar $(JAR) src/test/tinputrc
 clean:
-	-rm -fr $(JAR) $(TARGET)-*.tgz $(APIDIR) $(BUILDDIR) .rltest_history
+	-rm -fr $(JAR) $(TARGET)-*.tar.bz2 $(APIDIR) $(BUILDDIR) .rltest_history
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
