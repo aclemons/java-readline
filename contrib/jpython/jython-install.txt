@@ -1,0 +1,64 @@
+From SteveC@ignitesports.com Sun Dec 30 17:10:46 2001
+
+For about the third time, I have spent a few hours getting the readline
+library worked into jython.  (It happens every time I install a new
+jython and it changes a little bit each time.) You would think this
+annoying mess would get documented somewhere, but it hasn't, anywhere,
+correctly, in spite of several halfway attempts to do so.  And much of
+the documentation is out of date.
+
+So please, guys, make it a New Year's resolution to get this into the
+official docs, somewhere.  Here is a start, it worked for me:
+
+
+What you have to do to get Jython and Readline working (These
+instructions work for GNUReadline on my RedHat Linux system - your
+mileage may vary):
+
+Note: there is another option called Editline but Bernhard Bablok, the
+author of gnu java_readline says he couldn't get it working, so I didn't
+even try.  Nonetheless, Editline is the default in jython according to
+the source code in ReadlineConsole.java.  (See item #9 below ) If this
+is going to be the case, then the jython docs should give more info
+about it or work it into the standard distribution somehow. 
+
+1.  Download and install the javacc from
+http://www.webgain.com/products/java_cc/.  You can't build jython
+without this.
+
+2.  Download the java-readline source from
+http://www.bablokb.de/java/readline.html
+
+3.  Make the java_readline jar and backing library using the Makefile
+supplied.
+
+4.  Deploy these into your system lib directory.  (/usr/lib in my case)
+
+5.  Download the latest Jython sources from SourceForge. 
+
+6.  Create/Modify an ant.properties file in the same directory as the
+build.xml for jython and add the property readline.jar giving it the
+value of a path to the java_readline.jar you deployed in step 3,  as
+well as the path to javacc and any other optional jars you wish to
+include.
+
+7.  Build jython and deploy it.
+
+8.  Modify the jython shell script so as to precede the supplied command
+(java -Dpython.home=...) with 'LD_LIBRARY_PATH="/usr/lib"'
+
+9.  Modify your registry file to add the line
+
+     python.console.readlinelib=GnuReadline
+
+As far as I know this one isn't documented anywhere and if you don't put
+it in, the system tries to find Editline and throws an exception if it
+can't. I only pieced it together from reading the source code for
+jython's ReadlineConsole and for the gnu java readline.
+
+After all that, you finally have a console that recognizes the arrow
+keys for history when on the last line.  Way too complicated. 
+
+So while I thank the Jython developers and Mr. Bablok for their efforts
+and for making this possible at all, please, someone, make this easier
+or at least pull all the documentation into one place.
