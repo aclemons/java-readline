@@ -60,12 +60,21 @@ T_LIBS    = JavaReadline
 JAVAINCLUDE       = $(JAVA_HOME)/include
 JAVANATINC        = $(JAVA_HOME)/include/linux
 
-ifeq (MSC,$(WIN32))
+# Windows must set WIN32=CYGWIN or WIN32=MSC
+
+# set this in any case
+export DRIVE_C := /cygdrive/c
+ifneq (,$(WIN32))
 JAVA_HOME := c:/j2sdk1.4.0
-JAVANATINC = $(JAVA_HOME)/include/win32
-export PATH:=/cygdrive/$(subst :,,$(JAVA_HOME))/bin:/cygdrive/c/Programme/DevStudio/VC/bin:/cygdrive/c/Programme/DevStudio/SharedIDE/bin/:$(PATH)
-T_LIBS    = JavaGetline
-ARGS      = Getline
+JAVANATINC := $(JAVA_HOME)/include/win32
+export PATH:=$(subst c:,$(DRIVE_C),$(JAVA_HOME))/bin:$(PATH)
+endif
+
+# only for MSC (Microsoft-C): only Getline supported
+ifeq (MSC,$(WIN32))
+export PATH:=$(DRIVE_C)/Programme/DevStudio/VC/bin:$(DRIVE_C)/Programme/DevStudio/SharedIDE/bin/:$(PATH)
+T_LIBS = JavaGetline
+ARGS   = Getline
 endif
 
 ## normal javac
@@ -140,7 +149,7 @@ rpm: src-dist
 	rpm --define _topdir$(RPM_BASE) -ba $(RPM_BASE)/SPECS/libreadline-java.spec
 
 test: $(JAR) build-native
-	LD_LIBRARY_PATH=. java -jar $(JAR) src/test/tinputrc $(ARGS)
+	java  -Djava.library.path=. -jar $(JAR) src/test/tinputrc $(ARGS)
 
 clean:
 	$(MAKE) -C src/native clean

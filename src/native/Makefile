@@ -34,30 +34,41 @@ export
 ROOTDIR=../..
 BUILDDIR=$(ROOTDIR)/build
 
+CC = gcc
+OBJ_EXT := o
+LIB_PRE := lib
+LIB_EXT := so
+CFLAGS=-fPIC -DPOSIX
+
+INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
+LIBPATH           = -L/usr/lib/termcap 
+JavaReadline_LIBS = -lreadline -ltermcap -lhistory
+JavaEditline_LIBS = -ledit -ltermcap
+
+# override settings for windows
+
+# in any case
+ifneq (,$(WIN32))
+LIB_PRE := 
+LIB_EXT := dll
+CFLAGS := -DWIN32
+endif
+
+# for Microsoft-C
 ifeq (MSC,$(WIN32))
 INCLUDES = -I "c:/Programme/DevStudio/VC/include" \
 			-I $(JAVAINCLUDE) -I $(JAVANATINC)
 LIB = "c:/Programme/DevStudio/VC/lib"
 CC = cl
 OBJ_EXT := obj
-LIB_PRE := 
-LIB_EXT := dll
-CFLAGS=-DWIN32=$(WIN32) -D__IBMC__
-else
-INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
-LIBPATH           = -L/usr/lib/termcap 
-JavaReadline_LIBS = -lreadline -ltermcap -lhistory
-JavaEditline_LIBS = -ledit -ltermcap
-ifeq (cygwin,$(WIN32))
-JavaGetline_LIBS = -lcygwin
-endif
-CC = gcc
-OBJ_EXT := o
-LIB_PRE := lib
-LIB_EXT := so
-CFLAGS=-fPIC -DPOSIX
 endif
 
+# for cygwin
+ifeq (CYGWIN,$(WIN32))
+override JAVAINCLUDE := $(subst c:,$(DRIVE_C),$(JAVAINCLUDE))
+override JAVANATINC := $(subst c:,$(DRIVE_C),$(JAVANATINC))
+JavaGetline_LIBS = -ltermcap
+endif
 
 OBJECTS := org_gnu_readline_Readline.$(OBJ_EXT)
 ifeq ($(TG),JavaGetline)
@@ -81,24 +92,7 @@ $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT): $(OBJECTS)
 ifeq (MSC,$(WIN32))
 	$(CC) $(INCLUDES) -LD $(OBJECTS) -Fe$@
 else
-ifeq (CYGWIN,$(WIN32))
-	$(CC) -s -W1,--base-file,$(ROOTDIR)/lib$(TG).base -o $@ \
-		$(OBJECTS) -W1,-e,_readline_init@12
-	dlltool --base-file $(ROOTDIR)/lib$(TG).base \
-		--def $(ROOTDIR)/lib$(TG).def \
-		--output-exp $(ROOTDIR)/lib$(TG).exp \
-		--dllname $(ROOTDIR)/lib$(TG).dll
-	$(CC) -s -W1,--base-file $(ROOTDIR)/lib$(TG).base,$(ROOTDIR)/lib$(TG).exp \
-		-o $@ $(OBJECTS) -W1,-e,_readline_init@12
-	dlltool --base-file $(ROOTDIR)/lib$(TG).base \
-		--def $(ROOTDIR)/lib$(TG).def \
-		--output-exp $(ROOTDIR)/lib$(TG).exp \
-		--dllname $(ROOTDIR)/lib$(TG).dll
-	$(CC) -W1,$(ROOTDIR)/lib$(TG).exp -o $@ \
-		$(OBJECTS) -W1,-e,_readline_init@12
-else
-	$(CC) -shared $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
-endif
+	$(CC) -shared  $(INCLUDES) $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
 endif
 
 getline.$(OBJ_EXT): getline.c
