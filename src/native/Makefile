@@ -1,5 +1,5 @@
 #**************************************************************************
-#* Makefile for libJavaReadline.so -- load library for JNI wrapper of
+#* Makefile for libJava*.so -- load library for JNI wrapper of
 #* of GNU readline
 #*
 #* Copyright (c) 1987-1998 Free Software Foundation, Inc.
@@ -21,28 +21,37 @@
 #* Boston, MA  02111-1307 USA
 #***************************************************************************
 #
-# Makefile for JNI-library libJavaReadline.so
+# Makefile for JNI-library libJava*.so
 #
 # $Author$
 # $Revision$
 #
 
-.PHONY: all clean
+.PHONY: all lib clean clean_o
 
-SO := $(ROOTDIR)/libJavaReadline.so
+SO := $(patsubst %,$(ROOTDIR)/lib%.so,$(T_LIBS))
 
-all: $(SO)
+all: $(T_LIBS) 
 
-$(SO): org_gnu_readline_Readline.o
-	gcc -shared $(LIBPATH) $(LIBS) org_gnu_readline_Readline.o -o $(SO)
+lib: $(ROOTDIR)/lib$(TG).so  
+
+Java%:
+	make TG=$@ lib
+
+$(ROOTDIR)/lib%.so: clean_o org_gnu_readline_Readline.o
+	gcc -shared $(LIBPATH) $($(TG)_LIBS) org_gnu_readline_Readline.o -o $@
 
 org_gnu_readline_Readline.o: org_gnu_readline_Readline.c \
                                                    org_gnu_readline_Readline.h
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c org_gnu_readline_Readline.c
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -DLIB_TG=$(TG) \
+	-c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	javah -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
 
+clean_o:
+	-rm -f org_gnu_readline_Readline.o
+
 clean:
-	-rm $(SO) org_gnu_readline_Readline.h org_gnu_readline_Readline.o
+	-rm -f $(SO) org_gnu_readline_Readline.h org_gnu_readline_Readline.o
