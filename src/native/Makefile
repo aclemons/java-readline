@@ -48,7 +48,9 @@ INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
 LIBPATH           = -L/usr/lib/termcap 
 JavaReadline_LIBS = -lreadline -ltermcap -lhistory
 JavaEditline_LIBS = -ledit -ltermcap
+ifeq (cygwin,$(WIN32))
 JavaGetline_LIBS = -lcygwin
+endif
 CC = gcc
 OBJ_EXT := o
 LIB_PRE := lib
