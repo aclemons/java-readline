@@ -59,11 +59,11 @@ static int      gl_termw = 80;		/* actual terminal width */
 static int      gl_scroll = 27;		/* width of EOL scrolling region */
 static int      gl_width = 0;		/* net size available for input */
 static int      gl_extent = 0;		/* how far to redraw, 0 means all */
-static int      gl_overwrite = 0;	/* overwrite mode */
-static int      gl_pos, gl_cnt = 0;     /* position and size of input */
-static char     gl_buf[BUF_SIZE];       /* input buffer */
+ int      gl_overwrite = 0;	/* overwrite mode */
+ int      gl_pos, gl_cnt = 0;     /* position and size of input */
+ char     gl_buf[BUF_SIZE];       /* input buffer */
 static char     gl_killbuf[BUF_SIZE]=""; /* killed text */
-static char    *gl_prompt;		/* to save the prompt string */
+ char    *gl_prompt;		/* to save the prompt string */
 static char     gl_intrc = 0;		/* keyboard SIGINT char */
 static char     gl_quitc = 0;		/* keyboard SIGQUIT char */
 static char     gl_suspc = 0;		/* keyboard SIGTSTP char */
