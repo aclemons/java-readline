@@ -10,7 +10,7 @@ java: always $(BUILD)
 
 native: always
 	cd native ; $(MAKE) T_LIBS="$(T_LIBS)" JAVAINCLUDE="$(JAVAINCLUDE)" \
-                            JAVANATINC="$(JAVANATINC)" all
+                            OS_FLAVOR=$(OS_FLAVOR) JAVANATINC="$(JAVANATINC)" all
 
 $(BUILD):
 	mkdir $@

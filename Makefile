@@ -136,11 +136,12 @@ $(JAR):
 	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
 
 build-java: $(BUILDDIR)
-	cd src ; $(MAKE) JAVAC="$(JAVAC)" JC_FLAGS="$(JC_FLAGS)" java
+	cd src ; $(MAKE) JAVAC="$(JAVAC)" JC_FLAGS="$(JC_FLAGS)" \
+		OS_FLAVOR=$(OS_FLAVOR) java
 
 build-native: 
 	cd src; $(MAKE) T_LIBS="$(T_LIBS)" JAVAINCLUDE="$(JAVAINCLUDE)" \
-		        JAVANATINC="$(JAVANATINC)" native
+		        OS_FLAVOR=$(OS_FLAVOR) JAVANATINC="$(JAVANATINC)" native
 
 apidoc: $(APIDIR)
 	javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
