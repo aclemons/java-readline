@@ -1,3 +1,7 @@
+For release 0.7.3:
+	- don't add history automatically for each line. Provided by Brian Clapper
+	- removed 1024-byte limitation (useful for long multiline input)
+
 For release 0.7.2:
 	- no functionality changes; only modified build process a bit
  	  for first libreadline-java release on sourceforge (Henner)
