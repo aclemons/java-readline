@@ -40,6 +40,11 @@
 static char* utf2ucs(const char *utf8, char *ucs, size_t n);
 static char* ucs2utf(const char *ucs, char *utf8, size_t n);
 
+static jobject   jniObject;
+static jmethodID jniMethodId;
+static jclass    jniClass;
+static JNIEnv*   jniEnv;
+
 /* -------------------------------------------------------------------------- */
 /* Initialize readline and history. Set application name.                     */
 /* -------------------------------------------------------------------------- */
@@ -175,6 +180,120 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBind
     return (jboolean) JNI_TRUE;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Read history file                                                          */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFile
+                            (JNIEnv *env, jclass theClass, jstring jfilename) {
+  char buffer[BUF_LENGTH];
+  const char *filename;
+  jboolean is_copy;
+    
+  /* retrieve filename argument and convert to ucs -------------------------- */
+
+  filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
+  if (!utf2ucs(filename,buffer,BUF_LENGTH)) {
+    jclass newExcCls;
+    if (is_copy == JNI_TRUE)
+      (*env)->ReleaseStringUTFChars(env,jfilename,filename);
+    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;
+  }
+  if (is_copy == JNI_TRUE)
+    (*env)->ReleaseStringUTFChars(env,jfilename,filename);
+  
+  /* pass to history function ----------------------------------------------- */
+
+  read_history(buffer);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Write history file                                                         */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFile
+                            (JNIEnv *env, jclass theClass, jstring jfilename) {
+  char buffer[BUF_LENGTH];
+  const char *filename;
+  jboolean is_copy;
+  
+  /* retrieve filename argument and convert to ucs -------------------------- */
+
+  filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
+  if (!utf2ucs(filename,buffer,BUF_LENGTH)) {
+    jclass newExcCls;
+    if (is_copy == JNI_TRUE)
+      (*env)->ReleaseStringUTFChars(env,jfilename,filename);
+    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;
+  }
+  if (is_copy == JNI_TRUE)
+    (*env)->ReleaseStringUTFChars(env,jfilename,filename);
+  
+  /* pass to history function ----------------------------------------------- */
+
+  write_history(buffer);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Completer function, visible to the readline library                        */
+/* -------------------------------------------------------------------------- */
+
+char *java_completer(char *text, int state) {
+  jstring jtext;
+  jstring completion;
+  char *line;
+  jboolean is_copy;
+  
+  jtext = (*jniEnv)->NewStringUTF(jniEnv,text);
+
+  if (jniMethodId == 0) {
+    return;
+  }
+
+  completion = (*jniEnv)->CallObjectMethod(jniEnv, jniObject,
+						 jniMethodId, jtext, state);
+  if (!completion) {
+    return ((char *)NULL);
+  }
+
+  line = (*jniEnv)->GetStringUTFChars(jniEnv,completion,&is_copy);
+  return line;
+}
+  
+/* -------------------------------------------------------------------------- */
+/* Install completer object                                                   */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_installCompleter
+                                      (JNIEnv *env, jclass class, jobject obj) {
+  
+/*   completer_cls = (*env)->GetObjectClass(env, compl); */
+/*   completer_cls = (*env)->NewGlobalRef(env, completer_cls); */
+
+/*   completer = (*env)->GetMethodID(env, completer_cls, */
+/* 			      "completer", */
+/* 			      "(Ljava/lang/String;I)Ljava/lang/String;"); */
+
+/*  (*env)->CallVoidMethod(env, completer_cls, completer, "test", 1); */
+  jniEnv    = env;
+  jniObject = obj;
+  jniClass = (*jniEnv)->GetObjectClass(jniEnv, jniObject);
+  jniClass = (*env)->NewGlobalRef(env, jniClass);
+  jniObject = (*env)->NewGlobalRef(env, jniObject);
+  jniMethodId = (*jniEnv)->GetMethodID(jniEnv, jniClass, "completer",
+				    "(Ljava/lang/String;I)Ljava/lang/String;");
+  if (jniMethodId == 0) {
+    return;
+  }
+  rl_completion_entry_function = (Function*)java_completer;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Convert utf8-string to ucs1-string                   .                     */
