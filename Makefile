@@ -38,15 +38,16 @@ LIBS = -lreadline -ltermcap -lhistory
 
 all: libJavaReadline.so
 
-libJavaReadline.so: gnu_readline_Readline.o
+libJavaReadline.so: org_gnu_readline_Readline.o
 	gcc -shared -o libJavaReadline.so $(LIBPATH) \
-                                              gnu_readline_Readline.o $(LIBS)
+                                          org_gnu_readline_Readline.o $(LIBS)
 
-gnu_readline_Readline.o: gnu_readline_Readline.c gnu_readline_Readline.h
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c gnu_readline_Readline.c
+org_gnu_readline_Readline.o: org_gnu_readline_Readline.c \
+                                                   org_gnu_readline_Readline.h
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c org_gnu_readline_Readline.c
 
-gnu_readline_Readline.h: Readline.java
+org_gnu_readline_Readline.h: Readline.java
 	$(JAVAC) -d $(JTARGETDIR) Readline.java
 	(cd test && $(JAVAC) -d . ReadlineTest.java)
-	javah -jni gnu.readline.Readline
-	touch gnu_readline_Readline.h
+	javah -jni org.gnu.readline.Readline
+	touch org_gnu_readline_Readline.h

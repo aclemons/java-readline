@@ -20,7 +20,7 @@
 /**************************************************************************/
  
 
-package gnu.readline;
+package org.gnu.readline;
 
 import java.io.*;
 

@@ -35,7 +35,7 @@
  */
 
 import java.io.*;
-import gnu.readline.*;
+import org.gnu.readline.*;
 
 public class ReadlineTest {
   
