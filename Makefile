@@ -43,17 +43,19 @@ DFOOTER    = "<strong>$(NAME), Version $(VERSION)</strong>"
 PACKROOT  := 
 SUBDIRS    = src etc
 PACKAGES  := test org.gnu.readline
-BIN_ADD    = libJavaReadline.so $(APIDIR)
+BIN_ADD    = $(wildcard *.so) $(APIDIR)
 SRC_ADD   := contrib
 MF_STUB   := etc/manifest.stub
 
 # native stuff
 
-export JAVAINCLUDE := $(JAVA_HOME)/include
-export JAVANATINC  := $(JAVA_HOME)/include/linux
-export INCLUDES    := -I $(JAVAINCLUDE) -I $(JAVANATINC)
-export LIBPATH     := -L/usr/lib/termcap
-export LIBS        := -lreadline -ltermcap -lhistory
+export JAVAINCLUDE       := $(JAVA_HOME)/include
+export JAVANATINC        := $(JAVA_HOME)/include/linux
+export INCLUDES          := -I $(JAVAINCLUDE) -I $(JAVANATINC)
+export LIBPATH           := -L/usr/lib/termcap
+export T_LIBS            := JavaReadline JavaEditline
+export JavaReadline_LIBS := -lreadline -ltermcap -lhistory
+export JavaEditline_LIBS := -ledit -ltermcap
 
 VERSION         := $(shell cat VERSION)
 export ROOTDIR  := $(shell pwd)
