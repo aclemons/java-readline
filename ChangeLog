@@ -7,7 +7,8 @@ For release 0.5.2:
 	- updated TODO
 	
 For release 0.5.1:
-	- added word break patch (sets rl_completer_word_break_characters)
+	- added word break patch (sets rl_completer_word_break_characters,
+	  provided by David Dribin <dave@dribin.org>)
 	
 For release 0.5:
 	- added code for reading/writing history files
