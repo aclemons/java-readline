@@ -32,9 +32,10 @@ public class ReadlineReader extends Reader {
    * Constructs a ReadlineReader object with the given prompt.
    **/
   
-  public ReadlineReader(String prompt) { 
+  public ReadlineReader(String prompt,ReadlineLibrary lib) { 
     iBuff = new StringBuffer();
     setPrompt(prompt);
+    Readline.load(lib);
     Readline.initReadline("ReadlineReader");
     iLineSeparator = System.getProperty("line.separator", "\n");
   }
@@ -43,8 +44,8 @@ public class ReadlineReader extends Reader {
    * Constructs a ReadlineReader object with the default prompt.
    **/
 
-  public ReadlineReader() {
-    this(DEFAULT_PROMPT);
+  public ReadlineReader(ReadlineLibrary lib) {
+    this(DEFAULT_PROMPT,lib);
   }
 
   /**
@@ -52,8 +53,8 @@ public class ReadlineReader extends Reader {
    * file.
    **/
 
-  public ReadlineReader(File history) throws IOException {
-    this(DEFAULT_PROMPT);
+  public ReadlineReader(File history,ReadlineLibrary lib) throws IOException {
+    this(DEFAULT_PROMPT,lib);
     Readline.readHistoryFile(history.getAbsolutePath());
     iHistoryFile = history; // only set this if we can read the file
   }
@@ -63,8 +64,9 @@ public class ReadlineReader extends Reader {
    * file and prompt.
    **/
 
-  public ReadlineReader(String prompt, File history) throws IOException {
-    this(history);
+  public ReadlineReader(String prompt, File history,ReadlineLibrary lib)
+                                                         throws IOException {
+    this(history,lib);
     setPrompt(prompt);
   }
 
@@ -132,7 +134,8 @@ public class ReadlineReader extends Reader {
 
   public static void main(String[] args) throws Exception {
     java.io.BufferedReader rd = 
-      new java.io.BufferedReader(new ReadlineReader("hmm ", new File("test")));
+      new java.io.BufferedReader(new 
+	  ReadlineReader("hmm ", new File("test"),ReadlineLibrary.GnuReadline));
     String line;
     try {
       while ((line = rd.readLine()) != null) {
