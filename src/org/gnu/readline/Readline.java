@@ -79,13 +79,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_LIBRARY_VERSION = 
     new ReadlineConstString(0, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -95,13 +96,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_READLINE_NAME = 
     new ReadlineConstString(1, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -127,13 +129,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_LINE_BUFFER = 
     new ReadlineConstString(3, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -175,13 +178,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_BASIC_WORD_BREAK_CHARACTERS =
     new ReadlineConstString(6, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -191,13 +195,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_COMPLETER_WORD_BREAK_CHARACTERS = 
     new ReadlineConstString(7, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -207,13 +212,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_COMPLETER_QUOTE_CHARACTERS = 
     new ReadlineConstString(8, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -255,13 +261,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_SPECIAL_PREFIXES = 
     new ReadlineConstString(11, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -398,13 +405,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_POINT = 
     new ReadlineConstInt(5, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -414,13 +422,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_END = 
     new ReadlineConstInt(6, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -654,13 +663,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_COMPLETION_TYPE = 
     new ReadlineConstInt(21, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -670,13 +680,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_COMPLETION_APPEND_CHARACTER = 
     new ReadlineConstInt(22, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -702,13 +713,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_COMPLETION_QUERY_ITEMS = 
     new ReadlineConstInt(24, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -750,13 +762,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_INHIBIT_COMPLETION = 
     new ReadlineConstInt(27, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -766,13 +779,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt HISTORY_BASE = 
     new ReadlineConstInt(28, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**
@@ -782,13 +796,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Editline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt HISTORY_LENGTH = 
     new ReadlineConstInt(29, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
 
 
   /**

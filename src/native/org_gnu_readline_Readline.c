@@ -70,6 +70,14 @@ static int undefinedInternalInt = 0;
 static char* undefinedInternalString = NULL;
 static char undefinedInternalChar = '0';
 
+/*
+ * Some variables are available with editline but are not declared in
+ * the appropriate headers.
+ */
+#ifdef JavaEditline
+extern int rl_inhibit_completion;
+#endif
+
 #ifdef JavaReadline
 static int* globalIntegerInternals[] = {
   &rl_readline_version,
@@ -145,8 +153,8 @@ static int* globalIntegerInternals[] = {
   &undefinedInternalInt, /*  &rl_readline_state, */
   &undefinedInternalInt, /*  &rl_editing_mode, */
   &undefinedInternalInt, /*  &rl_insert_mode, */
-  &undefinedInternalInt, /*  &rl_point, */
-  &undefinedInternalInt, /*  &rl_end, */
+  &rl_point,
+  &rl_end,
   &undefinedInternalInt, /*  &rl_mark, */
   &undefinedInternalInt, /*  &rl_done, */
   &undefinedInternalInt, /*  &rl_pending_input, */
@@ -161,34 +169,34 @@ static int* globalIntegerInternals[] = {
   &undefinedInternalInt, /*  &rl_filename_completion_desired, */
   &undefinedInternalInt, /*  &rl_filename_quoting_desired, */
   &undefinedInternalInt, /*  &rl_attempted_completion_over, */
-  &undefinedInternalInt, /*  &rl_completion_type, */
-  &undefinedInternalInt, /*  &rl_completion_append_character, */
+  &rl_completion_type,
+  &rl_completion_append_character,
   &undefinedInternalInt, /*  &rl_completion_suppress_append, */
-  &undefinedInternalInt, /*  &rl_completion_query_items, */
+  &rl_completion_query_items,
   &undefinedInternalInt, /*  &rl_completion_mark_symlink_dirs, */
   &undefinedInternalInt, /*  &rl_ignore_completion_duplicates, */
-  &undefinedInternalInt, /*  &rl_inhibit_completion, */
+  &rl_inhibit_completion,
 
-  &undefinedInternalInt, /*  &history_base, */
-  &undefinedInternalInt, /*  &history_length, */
+  &history_base,
+  &history_length,
   &undefinedInternalInt, /*  &history_max_entries, */
   &undefinedInternalInt, /*  &history_quotes_inhibit_expansion, */
   NULL
 };
 
 static char** globalStringInternals[] = {
-  &undefinedInternalString, /* const  &rl_library_version, */
-  &undefinedInternalString, /* const  &rl_readline_name, */
+  /* const */ &rl_library_version,
+  /* const */ &rl_readline_name,
   &undefinedInternalString, /*  &rl_prompt, */
-  &undefinedInternalString, /*  &rl_line_buffer, */
+  &rl_line_buffer,
   &undefinedInternalString, /* const  &rl_terminal_name, */
   &undefinedInternalString, /*  &rl_executing_macro, */
-  &undefinedInternalString, /* const  &rl_basic_word_break_characters, */
-  &undefinedInternalString, /* const  &rl_completer_word_break_characters, */
-  &undefinedInternalString, /* const  &rl_completer_quote_characters, */
+  /* const */ &rl_basic_word_break_characters,
+  /* const */ &rl_completer_word_break_characters,
+  /* const */ &rl_completer_quote_characters,
   &undefinedInternalString, /* const  &rl_basic_quote_characters, */
   &undefinedInternalString, /* const  &rl_filename_quote_characters, */
-  &undefinedInternalString, /* const  &rl_special_prefixes, */
+  /* const */ &rl_special_prefixes,
 
   &undefinedInternalString, /*  &history_word_delimiters, */
   &undefinedInternalString, /*  &history_no_expand_chars, */
@@ -814,14 +822,17 @@ JNIEXPORT jstring JNICALL
 
   /* save old value */
 
-  oldValue = strdup(*(globalStringInternals[(int) jindex]));
-  if (!oldValue) {
-    jclass newExcCls;
-    newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
-    return;    
-  }
+  if (*(globalStringInternals[(int) jindex])) {
+    oldValue = strdup(*(globalStringInternals[(int) jindex]));
+    if (!oldValue) {
+      jclass newExcCls;
+      newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
+      if (newExcCls != NULL)
+        (*env)->ThrowNew(env,newExcCls,"");
+      return;    
+    }
+  } else
+    oldValue = NULL;
 
   /* read new value from argument */
 
@@ -847,9 +858,12 @@ JNIEXPORT jstring JNICALL
   
   /* return old value */
   
-  ucs2utf(oldValue);
-  free(oldValue);
-  return (*env)->NewStringUTF(env,buffer);
+  if (oldValue) {
+    ucs2utf(oldValue);
+    free(oldValue);
+    return (*env)->NewStringUTF(env,buffer);
+  } else
+    return NULL;
 }
 
 /* -------------------------------------------------------------------------- */
