@@ -35,4 +35,4 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{prefix}/lib/libJavaReadline.so
 %{prefix}/share/java/%{name}.jar
-%doc ChangeLog README README.1st VERSION api
+%doc NEWS ChangeLog README README.1st VERSION api
