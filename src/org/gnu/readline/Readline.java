@@ -61,4 +61,25 @@ public class Readline {
 
   public native static String readline(String prompt)
                               throws EOFException, UnsupportedEncodingException;
+
+  /**
+     Read keybindings and variable assignments from a file. This method is a
+     wrapper to rl_read_init_file(char *filename). Throws IOException if 
+     something goes wrong.
+
+     @param filename Name of file to read bindings from
+     @return void
+  */
+
+  public native static void readInitFile(String filename) throws IOException;
+
+  /**
+     Parse argument string as if it had been read from `inputrc' file
+     and perform key bindings and variable assignments found.
+
+     @param line Simulated line from inputrc file
+     @return boolean False in case of error
+  */
+
+  public native static boolean parseAndBind(String line);
 }
