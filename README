@@ -40,6 +40,7 @@ need libedit2 and libedit-dev. Source code is also available, although
 I must admit I did not succeed in compiling it on my non-BSD and
 non-Debian system :-(
 
+
 COMPILATION
 ===========
 
@@ -53,6 +54,7 @@ If you don't have the Editline libraries installed, use
 "make T_LIBS=JavaReadline" (the default creates both JavaReadline and
 JavaEditline).
 
+
 INSTALLATION
 ============
 
@@ -64,6 +66,16 @@ library, you can run a program with something like:
 LD_LIBRARY_PATH=/usr/lib java -cp java_readline.jar org.foo.bar.MyClass
 
 assuming that you put libJava*.so into /usr/lib.
+
+
+DEBIAN
+======
+
+Thanks to Ben Burton, Debian-packages for JavaReadline are available!
+
+
+SUPPORT
+=======
 
 If you think you found a bug or want to contribute some code please drop 
 me a note.
