@@ -49,7 +49,7 @@ static JNIEnv*   jniEnv;
 /* Initialize readline and history. Set application name.                     */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadline
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
                               (JNIEnv *env, jclass theClass, jstring jappName) {
    const char *appName;
    jboolean is_copy;
@@ -69,7 +69,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadline
 /* Prompt for input. "Main" readline function.          .                     */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readline
+JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
                                (JNIEnv *env, jclass theClass, jstring jprompt) {
 
   char buffer[BUF_LENGTH];
@@ -114,7 +114,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readline
 /* Read keybindings from file.                                                */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFile
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   char buffer[BUF_LENGTH];
   const char *filename;
@@ -151,7 +151,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFile
 /* Read keybinding from string.                                               */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBind
+JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
                                 (JNIEnv *env, jclass theClass, jstring jline) {
   char buffer[BUF_LENGTH];
   const char *line;
@@ -184,7 +184,7 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBind
 /* Read history file                                                          */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFile
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   char buffer[BUF_LENGTH];
   const char *filename;
@@ -214,7 +214,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFile
 /* Write history file                                                         */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFile
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
   char buffer[BUF_LENGTH];
   const char *filename;
@@ -271,7 +271,7 @@ char *java_completer(char *text, int state) {
 /* Install completer object                                                   */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_installCompleter
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_installCompleterImpl
                                       (JNIEnv *env, jclass class, jobject obj) {
   
 /*   completer_cls = (*env)->GetObjectClass(env, compl); */
@@ -299,9 +299,9 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_installCompleter
 /* Returns rl_completer_word_break_characters                                 */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getWordBreakCharacters
-  (JNIEnv * env, jclass class)
-{
+JNIEXPORT jstring JNICALL 
+             Java_org_gnu_readline_Readline_getWordBreakCharactersImpl
+                                                 (JNIEnv * env, jclass class) {
   jstring word_break_characters;
 
   jniEnv = env;
@@ -323,9 +323,9 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getWordBreakCharacters
 
 static char word_break_buffer[BUF_LENGTH];
 
-JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setWordBreakCharacters
-  (JNIEnv * env, jclass class, jstring jword_break_chars)
-{
+JNIEXPORT void JNICALL 
+                    Java_org_gnu_readline_Readline_setWordBreakCharactersImpl
+                      (JNIEnv * env, jclass class, jstring jword_break_chars) {
   const char * word_break_chars;
   jboolean is_copy;
   
