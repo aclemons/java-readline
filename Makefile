@@ -34,8 +34,8 @@ CHANGELOG = ChangeLog
 LICENSE   = COPYING.LIB
 TODO      = TODO
 NAME      = The Java-Readline Library
-HOMEPAGE  = http://www.bablokb.de/java/readline.html
-COPYRIGHT = Released under the LGPL, (c) Bernhard Bablok 1998-2001
+HOMEPAGE  = http://java-readline.sourceforge.net/
+COPYRIGHT = Released under the LGPL, (c) Bernhard Bablok, Henner Zeller 1998-2002
 WTITLE    = "$(NAME)"
 DTITLE    = "$(NAME), Version $(VERSION)"
 DBOTTOM   = "$(COPYRIGHT)<br>Homepage: <a href="$(HOMEPAGE)">$(HOMEPAGE)</a>"

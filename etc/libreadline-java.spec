@@ -9,7 +9,7 @@ Provides: java_readline
 Packager: Henner Zeller <H.Zeller@acm.org>
 Release: 1
 Source: %{name}-%{version}-src.tar.gz
-URL: http://www.bablokb.de/java/readline.html
+URL: http://java-readline.sourceforge.net/
 Version: %{version}
 Buildroot: /tmp/javareadline-build
 BuildRequires: readline-devel
