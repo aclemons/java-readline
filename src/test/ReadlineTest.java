@@ -52,16 +52,17 @@ public class ReadlineTest {
   */
 
   public static void main(String[] args) {
-    String line;
+    String line, libName;
     
     // Readline.setThrowExceptionOnUnsupportedMethod(true);
     
     if (args.length > 1)
-      Readline.load(ReadlineLibrary.byName(args[1]));
+      libName = args[1];
     else
-      Readline.load(ReadlineLibrary.GnuReadline);
+      libName = "GnuReadline";
 		    
-    System.out.println("initializing Readline...");
+    Readline.load(ReadlineLibrary.byName(libName));
+    System.out.println("initializing " + libName);
     Readline.initReadline("ReadLineTest"); // init, set app name, read inputrc
     System.out.println("... done");
 
@@ -114,7 +115,7 @@ public class ReadlineTest {
       String version = Readline.getVar(Readline.RL_LIBRARY_VERSION);
       System.out.println("Readline-Version: " + version);
     } catch (UnsupportedEncodingException enc) {
-      System.err.println("Could not query libarary version");
+      System.err.println("Could not query library version");
       System.exit(0);
     }
     
