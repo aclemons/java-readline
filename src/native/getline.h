@@ -5,16 +5,16 @@
  * the bsd or sysv interface will be used 
  */
 
-#if __STDC__ > 0
-#include <stddef.h>
-
 /* readline compatibility stuff */
 
 extern char* rl_readline_name;                  /* unused by getline   */
 #define add_history(buffer) gl_histadd(buffer)
 #define readline(buffer)    getline(buffer)
 #define clear_history()     hist_init()
+#define using_history()     hist_init()
 
+#if __STDC__ > 0
+#include <stddef.h>
 
 typedef size_t (*gl_strwidth_proc)(char *);
 
