@@ -92,6 +92,16 @@ public class Readline {
   private static BufferedReader iReader = null;
 
   /**
+     The current encoding of the BufferedReader. The default is the
+     value of the property <em>readline.encoding</em>. If this
+     property is unset, the default is null, so the BufferedReader
+     will use the default encoding.
+  */
+
+  private static String iEncoding = 
+    System.getProperty("readline.encoding", null);
+
+  /**
      Configuration flag: throw an UnsupportedOperationException, if true.
      This value defaults to false.
   */
@@ -190,8 +200,13 @@ public class Readline {
       return line;
     } else {
       System.out.print(prompt);
-      if (iReader == null)
-        iReader = new BufferedReader(new InputStreamReader(System.in));
+      if (iReader == null) {
+	if (iEncoding == null)
+	  iReader = new BufferedReader(new InputStreamReader(System.in));
+	else {
+	  iReader = new BufferedReader(
+	    new InputStreamReader(System.in, iEncoding));
+      }
       String line = iReader.readLine();
       if (line == null)
         throw new EOFException("EOF");
@@ -490,6 +505,31 @@ public class Readline {
     return iThrowException;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+    Set current encoding of fallback BufferedReader.
+
+    @param encoding encoding to use
+  */
+
+  public static void setEncoding(String encoding) {
+    iEncoding = encoding;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+    Query current encoding of fallback BufferedReader.
+
+    @return current encoding
+  */
+
+  public static String getEncoding() {
+    return iEncoding;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
 
   /**
