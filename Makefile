@@ -21,33 +21,26 @@
 #* Boston, MA  02111-1307 USA
 #***************************************************************************
 #
-# Makefile for JNI-library libJavaReadline.so
+# Toplevel Makefile for Java-Readline
 #
 # $Author$
 # $Revision$
 #
 
+.PHONY : all class native test
+
 JAVAC = jikes
-JPATH = /usr/lib/java
-JTARGETDIR = $(HOME)/classes                  # must be in CLASSPATH
-JAVAINCLUDE = $(JPATH)/include
-JAVANATINC = $(JPATH)/include/genunix
-INCLUDES= -I $(JAVAINCLUDE) -I $(JAVANATINC)
-LIBPATH = -L/usr/lib/termcap
-LIBS = -lreadline -ltermcap -lhistory
+JTARGETDIR = $(HOME)/classes
 
-all: libJavaReadline.so
+all: class native test
 
-libJavaReadline.so: org_gnu_readline_Readline.o
-	gcc -shared -o libJavaReadline.so $(LIBPATH) \
-                                          org_gnu_readline_Readline.o $(LIBS)
-
-org_gnu_readline_Readline.o: org_gnu_readline_Readline.c \
-                                                   org_gnu_readline_Readline.h
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c org_gnu_readline_Readline.c
-
-org_gnu_readline_Readline.h: Readline.java
+class: Readline.class
 	$(JAVAC) -d $(JTARGETDIR) Readline.java
-	(cd test && $(JAVAC) -d . ReadlineTest.java)
-	javah -jni org.gnu.readline.Readline
-	touch org_gnu_readline_Readline.h
+	cp $(JTARGETDIR)/org/gnu/readline/Readline.class .
+
+native:
+	$(MAKE) -C native
+
+test:
+	$(MAKE) -C test 
+
