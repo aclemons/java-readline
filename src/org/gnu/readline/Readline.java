@@ -221,13 +221,23 @@ public class Readline {
   /**
      Add a line to the in-memory history.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+	  <li>Getline</li>
+        </ul>
+     </p>
+
      @param line  The line to add to the history
      @throws UnsupportOperationException if underlying library doesn't support
                                          a history
   */
 
   public static void addToHistory(String line) {
-      if (iLib == ReadlineLibrary.GnuReadline||iLib == ReadlineLibrary.Getline)
+      if (iLib == ReadlineLibrary.GnuReadline || 
+	  iLib == ReadlineLibrary.Editline ||
+	  iLib == ReadlineLibrary.Getline)
         addToHistoryImpl(line);
       else if (iThrowException)
       throw new UnsupportedOperationException();
@@ -238,13 +248,21 @@ public class Readline {
   /**
      Get the history buffer in a supplied <tt>Collection</tt>.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
      @param collection  where to store the history
      @throws UnsupportOperationException if underlying library doesn't support
                                          a history
   */
 
   public static void getHistory(Collection collection) {
-      if (iLib == ReadlineLibrary.GnuReadline)
+      if (iLib == ReadlineLibrary.GnuReadline ||
+	  iLib == ReadlineLibrary.Editline)
         getHistoryImpl(collection);
       else if (iThrowException)
         throw new UnsupportedOperationException();
@@ -255,11 +273,19 @@ public class Readline {
   /**
      Get the size, in elements (lines), of the history buffer.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
      @return the number of lines in the history buffer
   */
   public static int getHistorySize() {
       int result = 0;
-      if (iLib == ReadlineLibrary.GnuReadline)
+      if (iLib == ReadlineLibrary.GnuReadline ||
+	  iLib == ReadlineLibrary.Editline)
         result = getHistorySizeImpl();
       else if (iThrowException)
         throw new UnsupportedOperationException();
@@ -270,9 +296,17 @@ public class Readline {
 
   /**
      Clear the history buffer.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
   */
   public static void clearHistory() {
-      if (iLib == ReadlineLibrary.GnuReadline)
+      if (iLib == ReadlineLibrary.GnuReadline ||
+	  iLib == ReadlineLibrary.Editline)
         clearHistoryImpl();
       else if (iThrowException)
         throw new UnsupportedOperationException();
@@ -285,13 +319,21 @@ public class Readline {
      are numbered from 0 through (<tt>getHistorySize() - 1</tt>), with the
      oldest entry at index 0.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
      @param i  the index of the entry to return
      @return the line at the specified index in the history buffer
      @throws ArrayIndexOutOfBoundsException index out of range
   */
   public static String getHistoryLine(int i) {
     String s = null;
-    if (iLib == ReadlineLibrary.GnuReadline) {
+    if (iLib == ReadlineLibrary.GnuReadline ||
+	iLib == ReadlineLibrary.Editline) {
       if ((i < 0) || i >= getHistorySize())
         throw new ArrayIndexOutOfBoundsException(i);
       s = getHistoryLineImpl(i);
@@ -307,6 +349,12 @@ public class Readline {
      Read keybindings and variable assignments from a file. This method is a
      wrapper to rl_read_init_file(char *filename). Throws IOException if 
      something goes wrong.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>
 
      @param filename Name of file to read bindings from
      @return void
@@ -325,6 +373,12 @@ public class Readline {
      Parse argument string as if it had been read from `inputrc' file
      and perform key bindings and variable assignments found.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+        </ul>
+     </p>
+
      @param line Simulated line from inputrc file
      @return boolean False in case of error
   */
@@ -342,7 +396,15 @@ public class Readline {
 
   /**
      Reads a history file into memory
-       @param filename Name of history file to read
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
+     @param filename Name of history file to read
      */
 
   public static void readHistoryFile(String filename)
@@ -358,6 +420,13 @@ public class Readline {
 
   /**
      Writes a history file to disc
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
 
      @param filename Name of history file to write
   */
@@ -377,6 +446,13 @@ public class Readline {
      Set your completer implementation. Setting this to <code>null</code>
      will result in the default behaviour of readline which is filename
      completion.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
 
      @param rlc An object implementing the ReadlineCompleter interface
   */
@@ -406,6 +482,14 @@ public class Readline {
 
   /**
      Reset the readline library and with it, the terminal.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
   */
     
   public static void cleanup() {
@@ -418,10 +502,18 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   *  return if we have a terminal. This requires, that any of the native
-   *  libraries have been loaded yet
-   *  (so call Readline.{@link #load(ReadlineLibrary)}())
-   *  first, otherwise this will always return true.
+     Return if we have a terminal. This requires, that any of the native
+     libraries have been loaded yet
+     (so call Readline.{@link #load(ReadlineLibrary)}())
+     first, otherwise this will always return true.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
    */
 
    public static boolean hasTerminal() {
@@ -436,6 +528,14 @@ public class Readline {
 
   /**
      Query word break characters.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
+
   */
     
   public static String getWordBreakCharacters() {
@@ -454,6 +554,13 @@ public class Readline {
      the internal line buffer. You might need this in a 
      {@link ReadlineCompleter} implementation to access the full text
      given so far.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
   */
     
   public static String getLineBuffer() {
@@ -470,6 +577,13 @@ public class Readline {
 
   /**
      Set word break characters.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+        </ul>
+     </p>
 
      @param wordBreakCharacters A string of word break characters
   */
