@@ -27,6 +27,9 @@
  *$endif
  *</pre>
  *
+ * If an argument is given to ReadlineTest, a private initialization file
+ * is read.
+ *
  * @author $Author$
  * @version $Revision$
  */
@@ -42,7 +45,21 @@ public class ReadlineTest {
 
   public static void main(String[] args) {
     String line;
-    Readline.initReadline("ReadlineTest");
+    Readline.initReadline("ReadLineTest"); // init, set app name, read inputrc
+
+    try {
+      if (args.length > 0)
+	Readline.readInitFile("tinputrc"); // read private inputrc
+    } catch (IOException e) {              // this deletes any initialization
+      System.out.println(e.toString());    // from /etc/inputrc and ~/.inputrc
+	System.exit(0);
+    }
+      
+    // define some additional function keys
+
+    Readline.parseAndBind("\"\\e[18~\":	\"Function key F7\"");
+    Readline.parseAndBind("\"\\e[19~\":	\"Function key F8\"");
+
     while (true) {
       try {
 	line = Readline.readline("linux> ");
