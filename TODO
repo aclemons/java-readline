@@ -4,5 +4,3 @@
   * rl_initialize
   * rl_library_version
   * custom completers (if possible)
-
-- Support characters with 8'th bit set
