@@ -99,7 +99,7 @@ public class ReadlineTest {
 	  System.out.println("line = >" + line + "<");
       } catch (UnsupportedEncodingException enc) {
 	  System.err.println("caught UnsupportedEncodingException");
-      } catch (EOFException eof) {
+      } catch (IOException eof) {
         System.out.println();
 	try {
 	  Readline.writeHistoryFile(history.getName());
