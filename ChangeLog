@@ -1,3 +1,10 @@
+For release 0.7.1:
+       (provided by Henner Zeller <H.Zeller@acm.org>)
+	- provide method hasTerminal() to check, if we are run from a terminal
+          (calls isatty())
+        - make build process work on Solaris
+        - provide RPM-spec file
+
 For release 0.7.0:
 	- bugfix: setCompleter(null) crashed the virtual machine. Now, it sets
 	  the completer back to default behaviour (filename completion)
@@ -12,7 +19,7 @@ For release 0.7.0:
 	  better indented example for Readline. Added cleanup() in the example.
 	- declare the 'UnsatisfiedLinkError' in the load() method for
 	  documentation purposes.
-	(all changes provided by Henner Zeller)
+	(all changes provided by Henner Zeller <H.Zeller@acm.org>)
 	- added note about Debian-packages in README
 	- new description on how to make Jython work with JavaReadline
 	(copied from a posting of Steve Cohen <SteveC@ignitesports.com> to
