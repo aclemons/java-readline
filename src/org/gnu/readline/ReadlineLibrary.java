@@ -88,7 +88,7 @@ public final class ReadlineLibrary {
       return GnuReadline;
     else if (name.equals("Editline"))
       return Editline;
-    else if (name.equals("ureJava"))
+    else if (name.equals("PureJava"))
       return PureJava;
     return null;
   }
