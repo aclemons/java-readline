@@ -78,6 +78,18 @@ static char undefinedInternalChar = '0';
 extern int rl_inhibit_completion;
 #endif
 
+/*
+ * Some variables are available with getline but are not declared in
+ * the appropriate headers.
+ */
+#ifdef JavaGetline
+extern int gl_overwrite;
+extern int gl_pos;
+extern int gl_cnt;
+extern char* gl_prompt;
+extern char* gl_buf;
+#endif
+
 #ifdef JavaReadline
 static int* globalIntegerInternals[] = {
   &rl_readline_version,
@@ -218,9 +230,9 @@ static int* globalIntegerInternals[] = {
   &undefinedInternalInt, /*  &rl_gnu_readline_p, */
   &undefinedInternalInt, /*  &rl_readline_state, */
   &undefinedInternalInt, /*  &rl_editing_mode, */
-  &undefinedInternalInt, /*  &rl_insert_mode, */
-  &undefinedInternalInt, /*  &rl_point, */
-  &undefinedInternalInt, /*  &rl_end, */
+  &gl_overwrite,         /*  &rl_insert_mode, gl_overwrite == !rl_insert_mode */
+  &gl_pos,               /*  &rl_point, */
+  &gl_cnt,               /*  &rl_end, */
   &undefinedInternalInt, /*  &rl_mark, */
   &undefinedInternalInt, /*  &rl_done, */
   &undefinedInternalInt, /*  &rl_pending_input, */
@@ -253,8 +265,8 @@ static int* globalIntegerInternals[] = {
 static char** globalStringInternals[] = {
   &undefinedInternalString, /* const  &rl_library_version, */
   &undefinedInternalString, /* const  &rl_readline_name, */
-  &undefinedInternalString, /*  &rl_prompt, */
-  &undefinedInternalString, /*  &rl_line_buffer, */
+  &gl_prompt,               /*  &rl_prompt, */
+  &gl_buf,                  /*  &rl_line_buffer, */
   &undefinedInternalString, /* const  &rl_terminal_name, */
   &undefinedInternalString, /*  &rl_executing_macro, */
   &undefinedInternalString, /* const  &rl_basic_word_break_characters, */

@@ -113,13 +113,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Getline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_PROMPT = 
     new ReadlineConstString(2, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Getline});
 
 
   /**
@@ -130,13 +131,15 @@ public class Readline {
         <ul>
 	  <li>GNU-Readline</li>
 	  <li>Editline</li>
+	  <li>Getline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstString RL_LINE_BUFFER = 
     new ReadlineConstString(3, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
+      {ReadlineLibrary.GnuReadline,
+       ReadlineLibrary.Editline, ReadlineLibrary.Getline});
 
 
   /**
@@ -389,13 +392,14 @@ public class Readline {
      <p>Supporting implementations:
         <ul>
 	  <li>GNU-Readline</li>
+	  <li>Getline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_INSERT_MODE = 
     new ReadlineConstInt(4, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline});
+      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Getline});
 
 
   /**
@@ -406,13 +410,15 @@ public class Readline {
         <ul>
 	  <li>GNU-Readline</li>
 	  <li>Editline</li>
+	  <li>Getline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_POINT = 
     new ReadlineConstInt(5, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
+      {ReadlineLibrary.GnuReadline,
+       ReadlineLibrary.Editline, ReadlineLibrary.Getline});
 
 
   /**
@@ -423,13 +429,15 @@ public class Readline {
         <ul>
 	  <li>GNU-Readline</li>
 	  <li>Editline</li>
+	  <li>Getline</li>
         </ul>
      </p>     
   */
   
   public final static ReadlineConstInt RL_END = 
     new ReadlineConstInt(6, new ReadlineLibrary[] 
-      {ReadlineLibrary.GnuReadline, ReadlineLibrary.Editline});
+      {ReadlineLibrary.GnuReadline,
+       ReadlineLibrary.Editline, ReadlineLibrary.Getline});
 
 
   /**
