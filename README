@@ -17,8 +17,7 @@ Since I changed some of the code, all bugs are my fault and bugreports
 should be adressed to me.
 
 The binary distribution contains the API documentation, a JAR with the
-Readline class and the shared libraries libJavaReadline.so and 
-libJavaEditline.so. It was compiled running Linux 2.2.18 with glibc 2.2.
+Readline class and the shared library libJavaReadline.so.
 
 The source distribution contains all the source (I hope this doesn't surprise
 you ;-) and a system of makefiles. You need the JDK to compile it.
@@ -40,6 +39,11 @@ need libedit2 and libedit-dev. Source code is also available, although
 I must admit I did not succeed in compiling it on my non-BSD and
 non-Debian system :-(
 
+A second Readline replacement is called Getline. This is a very minimal
+Readline-clone with a liberal license, and the source-code is provided
+in the java-readline distribution. It has the advantage that it
+compiles natively on Windows.
+
 
 COMPILATION
 ===========
@@ -49,10 +53,11 @@ variable JAVA_HOME (or edit the makefile). Also, if you don't use jikes,
 you should change the variables JAVAC and JAVAC_OPT in the makefile. A better
 alternative is to install jikes, it will speed up your development by
 a factor of 2-3.
+JAVAC and JAVAC_OPT can also be set in the environment or from the
+make commandline.
 
-If you don't have the Editline libraries installed, use 
-"make T_LIBS=JavaReadline" (the default creates both JavaReadline and
-JavaEditline).
+If you want Editline support, use "make T_LIBS=JavaEditline". Getline support
+is selected with "make T_LIBS=JavaGetline".
 
 
 INSTALLATION
