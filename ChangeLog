@@ -1,3 +1,7 @@
+For release 0.7.2:
+	- no functionality changes; only modified build process a bit
+ 	  for first libreadline-java release on sourceforge (Henner)
+
 For release 0.7.1:
        (provided by Henner Zeller <H.Zeller@acm.org>)
 	- provide method hasTerminal() to check, if we are run from a terminal
