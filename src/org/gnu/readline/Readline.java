@@ -63,7 +63,12 @@ public class Readline {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-     Load an implementing backing library.
+     Load an implementing backing library. This method might throw an
+     UnsatisfiedLinkError in case the native libary is not found in the
+     library path.
+
+     @param lib An object (constant) of type ReadlineLibrary
+     @see org.gnu.readline.ReadlineLibrary
   */
 
   public static final void load(ReadlineLibrary lib) {
