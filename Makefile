@@ -27,88 +27,77 @@
 # $Revision$
 #
 
-TARGET    := java_readline
-README    := README README.1st
-CHANGELOG := ChangeLog
-LICENSE   := COPYING.LIB
-TODO      := TODO
-NAME      := The Java-Readline Library
-HOMEPAGE  := http://www.bablokb.de/java/readline.html
-COPYRIGHT := Released under the LGPL, (c) Bernhard Bablok 1998-2001
-WTITLE    := "$(NAME)"
-DTITLE     = "$(NAME), Version $(VERSION)"
-DBOTTOM   := "$(COPYRIGHT)<br>Homepage: <a href="$(HOMEPAGE)">$(HOMEPAGE)</a>"
-DHEADER    = "<strong>$(NAME), Version $(VERSION)</strong>"
-DFOOTER    = "<strong>$(NAME), Version $(VERSION)</strong>"
-PACKROOT  := 
-SUBDIRS   := src etc
-PACKAGES  := test org.gnu.readline
-BIN_ADD    = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
-             $(JAR) $(shell ls *.so) $(APIDIR)
-SRC_ADD   := $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
-             Makefile VERSION $(SUBDIRS) contrib
-MF_STUB   := etc/manifest.stub
+TARGET    = java_readline
+README    = README README.1st
+CHANGELOG = ChangeLog
+LICENSE   = COPYING.LIB
+TODO      = TODO
+NAME      = The Java-Readline Library
+HOMEPAGE  = http://www.bablokb.de/java/readline.html
+COPYRIGHT = Released under the LGPL, (c) Bernhard Bablok 1998-2001
+WTITLE    = "$(NAME)"
+DTITLE    = "$(NAME), Version $(VERSION)"
+DBOTTOM   = "$(COPYRIGHT)<br>Homepage: <a href="$(HOMEPAGE)">$(HOMEPAGE)</a>"
+DHEADER   = "<strong>$(NAME), Version $(VERSION)</strong>"
+DFOOTER   = "<strong>$(NAME), Version $(VERSION)</strong>"
+BIN_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+             $(JAR) *.so $(APIDIR)
+SRC_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+             Makefile VERSION $(SUBDIRS) contrib src etc
+MF_STUB   = etc/manifest.stub
 
-# native stuff
+# this might be /usr/src/RPM or /usr/src/packages, depending on the distrib
+RPM_BASE  = /usr/src/redhat
 
-export JAVAINCLUDE       := $(JAVA_HOME)/include
-export JAVANATINC        := $(JAVA_HOME)/include/linux
-export INCLUDES          := -I $(JAVAINCLUDE) -I $(JAVANATINC)
-export LIBPATH           := -L/usr/lib/termcap
-export T_LIBS            := JavaReadline JavaEditline
-export JavaReadline_LIBS := -lreadline -ltermcap -lhistory
-export JavaEditline_LIBS := -ledit -ltermcap
+# libraries to build
+T_LIBS    = JavaReadline JavaEditline
 
-VERSION         := $(shell cat VERSION)
-export ROOTDIR  := $(shell pwd)
-export BUILDDIR := $(shell pwd)/build
-export METADIR  := $(BUILDDIR)/META-INF
-export CLASSDIR := $(BUILDDIR)
-export JAR      := $(TARGET).jar
-APIDIR          := ./api
+# Operating system dependent
+JAVAINCLUDE       = $(JAVA_HOME)/include
+JAVANATINC        = $(JAVA_HOME)/include/linux
 
-export JAVAC := jikes
-export CLASSPATH := $(BUILDDIR):$(JAVA_HOME)/jre/lib/rt.jar
-export JAVAC_OPT := -O +E
+## normal javac
+JAVAC = javac
+JC_FLAGS = 
 
-.PHONY: src-dist bin-dist test apidoc jar subdirs $(SUBDIRS)
+## with jikes
+#JAVAC = jikes
+#JC_FLAGS = -O +E
 
-jar: subdirs
-	$(MAKE) $(JAR)
+VERSION         = `cat VERSION`
+JAR             = $(TARGET).jar
+APIDIR          = ./api
+BUILDDIR        = ./build
 
-$(JAR): $(MF_STUB) $(shell find build -type f)
-ifeq ($(strip $(MF_STUB)),) 
-	jar -cvf $(JAR) -C $(BUILDDIR)/ .
-else
-	jar -cvfm $(JAR) $(MF_STUB) -C $(BUILDDIR)/ .
-endif
+world : jar build-native
+
+jar: build-java
+	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
+
+build-java: $(BUILDDIR)
+	cd src ; $(MAKE) JAVAC="$(JAVAC)" JC_FLAGS="$(JC_FLAGS)" java
+
+build-native: 
+	cd src; $(MAKE) T_LIBS="$(T_LIBS)" JAVAINCLUDE="$(JAVAINCLUDE)" \
+		        JAVANATINC="$(JAVANATINC)" native
 
 apidoc: $(APIDIR)
 	javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
                 -doctitle $(DTITLE) -footer $(DFOOTER) -header $(DHEADER) \
                 -bottom $(DBOTTOM) \
-                -version -author $(patsubst %,$(PACKROOT)%,$(PACKAGES))
+                -version -author `find src -name "*.java"` 
 
-bin-dist: jar apidoc
-	tar -czf $(TARGET)-$(VERSION)-bin.tgz --exclude "CVS" $(BIN_ADD)
-	-rm -fr $(TARGET)-$(VERSION)
-	mkdir $(TARGET)-$(VERSION)
-	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-bin.tgz)
-	tar -cjf $(TARGET)-$(VERSION)-bin.tar.bz2 $(TARGET)-$(VERSION)
-	-rm -fr $(TARGET)-$(VERSION) $(TARGET)-$(VERSION)-bin.tgz 
+bin-dist: jar build-native apidoc
+	mkdir -p "$(TARGET)-$(VERSION)"
+	-cp -r $(BIN_ADD) "$(TARGET)-$(VERSION)"
+	tar -czf $(TARGET)-$(VERSION)-bin.tar.gz --exclude "CVS" "$(TARGET)-$(VERSION)"
+	rm -rf "$(TARGET)-$(VERSION)"
 
 src-dist: clean
-	tar -czf $(TARGET)-$(VERSION)-src.tgz --exclude "CVS" $(SRC_ADD)
-	-rm -fr $(TARGET)-$(VERSION)
-	mkdir $(TARGET)-$(VERSION)
-	(cd $(TARGET)-$(VERSION); tar -xzf ../$(TARGET)-$(VERSION)-src.tgz)
-	tar -cjf $(TARGET)-$(VERSION)-src.tar.bz2 $(TARGET)-$(VERSION)
-	rm -fr $(TARGET)-$(VERSION) $(TARGET)-$(VERSION)-src.tgz 
-
-subdirs: $(BUILDDIR) $(METADIR) $(SUBDIRS)
-
-$(SUBDIRS):
-	$(MAKE) -C $@
+	mkdir -p "$(TARGET)-$(VERSION)"
+	-cp -r $(SRC_ADD) "$(TARGET)-$(VERSION)"
+	tar -czf $(TARGET)-$(VERSION)-src.tar.gz --exclude "CVS" "$(TARGET)-$(VERSION)"
+	rm -rf "$(TARGET)-$(VERSION)"
 
 $(APIDIR):
 	mkdir $(APIDIR)
@@ -119,10 +108,15 @@ $(BUILDDIR):
 $(METADIR): 
 	mkdir $(METADIR)
 
-test: jar
-	LD_LIBRARY_PATH=$(ROOTDIR) java -jar $(JAR) src/test/tinputrc
+rpm: src-dist
+	cp etc/libreadline-java.spec $(RPM_BASE)/SPECS
+	cp $(TARGET)-$(VERSION)-src.tar.gz $(RPM_BASE)/SOURCES
+	rpm -ba $(RPM_BASE)/SPECS/libreadline-java.spec
+
+test: jar build-native
+	LD_LIBRARY_PATH=. java -jar $(JAR) src/test/tinputrc
+
 clean:
-	-rm -fr $(JAR) $(TARGET)-*.tar.bz2 $(APIDIR) $(BUILDDIR) .rltest_history
-	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir clean; \
-	done
+	-rm -fr `find . -name "*.o" -o -name "*.h" -o -name "*~"` \
+		$(JAR) $(TARGET)-*.tar.*z* $(APIDIR) \
+		$(BUILDDIR) *.so .rltest_history

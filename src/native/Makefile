@@ -27,25 +27,34 @@
 # $Revision$
 #
 
-.PHONY: all lib clean
+ROOTDIR=../..
+BUILDDIR=$(ROOTDIR)/build
 
-SO := $(patsubst %,$(ROOTDIR)/lib%.so,$(T_LIBS))
+INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
+LIBPATH           = -L/usr/lib/termcap 
+JavaReadline_LIBS = -lreadline -ltermcap -lhistory
+JavaEditline_LIBS = -ledit -ltermcap
+CC = gcc
+CFLAGS=-fPIC
 
 all: $(T_LIBS) 
 
 lib: $(ROOTDIR)/lib$(TG).so  
 
-Java%:
+JavaReadline:
 	make TG=$@ lib
 
-$(ROOTDIR)/lib%.so: org_gnu_readline_Readline.c org_gnu_readline_Readline.h
+JavaEditline:
+	make TG=$@ lib
+
+$(ROOTDIR)/lib$(TG).so: org_gnu_readline_Readline.c org_gnu_readline_Readline.h
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
 	-c org_gnu_readline_Readline.c
-	gcc -shared $(LIBPATH) $($(TG)_LIBS) org_gnu_readline_Readline.o -o $@
+	$(CC) -shared org_gnu_readline_Readline.o $(LIBPATH) $($(TG)_LIBS) -o $@
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
-	javah -jni org.gnu.readline.Readline
+	javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
 
 clean:
-	-rm -f $(SO) org_gnu_readline_Readline.h org_gnu_readline_Readline.o
+	-rm -f org_gnu_readline_Readline.h org_gnu_readline_Readline.o
