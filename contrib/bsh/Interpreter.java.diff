@@ -1,0 +1,79 @@
+37a38,43
+> import java.io.File;            // why? I don't know
+> import bsh.util.BshCompleter;
+> import bsh.util.NameCompletionTable;
+> import bsh.classpath.ClassManagerImpl;
+> import org.gnu.readline.Readline;
+> import org.gnu.readline.ReadlineReader;
+104a111
+> 
+221a229
+> 
+225a234
+> 
+358c367,393
+<             Reader in = new CommandLineReader( new InputStreamReader(src));
+---
+>             Reader in = null;
+>             boolean usingReadline = false;
+>             try {
+>                 File history = new File(System.getProperty("user.home") +
+>                                         File.separator + ".bsh_history");
+>                 if (!history.exists()) {
+>                     try {
+>                         history.createNewFile();
+>                     } catch(IOException ioe) {
+>                         debug("Unable to create history file: " + history.getAbsolutePath());
+>                     }
+>                 }
+>                 // should I wrap CommandLineReader around it?
+>                 if (history.canWrite() && history.canRead()) {
+>                     in = new ReadlineReader("bsh % ", history);
+>                 } else {
+>                     in = new ReadlineReader("bsh % ");
+>                     debug("Unable to read/write history file: " + history.getAbsolutePath());
+>                 }
+>             } catch (IOException ioe) {
+>                 System.err.println("Unable to invoke ReadlineReader " +
+>                                    "due to: " + ioe);
+>             }
+>             if (in == null)
+>                 in = new CommandLineReader( new InputStreamReader(src));
+>             else 
+>                 usingReadline = true;
+360a396,414
+>             if (usingReadline) {
+>                 NameCompletionTable nct = new NameCompletionTable();
+>                 nct.add(interpreter.getNameSpace());
+> 
+>                 /** ClassManager does a lot of chatting to the stdout,
+>                  *  so this has been commented out for the time being
+>                  **/
+> 
+> //              try {
+> //                  BshClassManager bcm = BshClassManager.getClassManager();
+> //                      if (bcm != null) {
+> //                          nct.add(((ClassManagerImpl)bcm).getClassPath());
+> //                      }
+> //                  } catch(ClassPathException cpe) {
+> //                      debug("classpath exception in name compl:" + cpe);
+> //                  } 
+> 
+>                 Readline.setCompleter(new BshCompleter(nct));
+>             }
+399c453
+<                 if(interactive)
+---
+>                         if(interactive && !(in instanceof ReadlineReader))
+496c550,556
+< 		if ( interactive && !noExitOnEOF ) 
+---
+>         if ( interactive && !noExitOnEOF ) {
+>             /* should be done for all streams in general, but this
+>              * ensures that the history for readline is flushed */
+>             try {
+>                 in.close();
+>             } catch (IOException ioe) {
+>             }
+498a559
+>     }
