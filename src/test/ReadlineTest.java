@@ -50,7 +50,7 @@ public class ReadlineTest {
 	  System.out.println("no input");
 	else
 	  System.out.println("line = >" + line + "<");
-      } catch (EOFException e) {
+      } catch (IOException e) {
 	System.out.println(e.toString());
 	System.exit(0);
       }
