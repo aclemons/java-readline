@@ -29,6 +29,7 @@
 
 TARGET    = libreadline-java
 README    = README README.1st
+NEWS      = NEWS
 CHANGELOG = ChangeLog
 LICENSE   = COPYING.LIB
 TODO      = TODO
@@ -40,9 +41,9 @@ DTITLE    = "$(NAME), Version $(VERSION)"
 DBOTTOM   = "$(COPYRIGHT)<br>Homepage: <a href="$(HOMEPAGE)">$(HOMEPAGE)</a>"
 DHEADER   = "<strong>$(NAME), Version $(VERSION)</strong>"
 DFOOTER   = "<strong>$(NAME), Version $(VERSION)</strong>"
-BIN_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+BIN_ADD   = $(README) $(NEWS) $(TODO) $(CHANGELOG) $(LICENSE) \
              $(JAR) *.so $(APIDIR)
-SRC_ADD   = $(README) $(TODO) $(CHANGELOG) $(LICENSE) \
+SRC_ADD   = $(README) $(NEWS) $(TODO) $(CHANGELOG) $(LICENSE) \
              Makefile VERSION $(SUBDIRS) contrib src etc
 MF_STUB   = etc/manifest.stub
 
