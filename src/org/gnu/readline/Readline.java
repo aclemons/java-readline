@@ -131,8 +131,20 @@ public class Readline {
     
   private native static void installCompleter(ReadlineCompleter rlc);
     
+  /**
+     Query word break characters.
+  */
+    
   public native static String getWordBreakCharacters();
-  public native static void setWordBreakCharacters(String wordBreakCharacters)
+
+  /**
+     Set word break characters.
+
+     @param wordBreakCharacters A string of word break characters
+  */
+    
+  public native static void 
+    setWordBreakCharacters(String wordBreakCharacters)
                               throws UnsupportedEncodingException;
 
 }
