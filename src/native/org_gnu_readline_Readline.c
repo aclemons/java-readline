@@ -200,11 +200,19 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
                                 (JNIEnv *env, jclass theClass, jobject jcoll) {
   jclass cls;
   jmethodID mid;
-  HIST_ENTRY **hist;
   jstring jline;
+#ifdef JavaReadline
+  HIST_ENTRY **hist;
+#endif
+#ifdef JavaEditline
+  HIST_ENTRY *histSingle;
+  int pos;
+#endif
 
   cls = (*env)->GetObjectClass(env,jcoll);
   mid = (*env)->GetMethodID(env,cls,"add","(Ljava/lang/Object;)Z");
+
+#ifdef JavaReadline
   hist = history_list();
   if (hist != NULL) {
     while (*hist != NULL) {
@@ -213,6 +221,18 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
       hist++;
     }
   }
+#endif
+
+#ifdef JavaEditline
+  for (pos = 0; pos < history_length; pos++) {
+    histSingle = history_get(pos + 1);
+    if (histSingle) {
+      ucs2utf(histSingle->line);
+      jline = (*env)->NewStringUTF(env,buffer);
+      (*env)->CallBooleanMethod(env,jcoll,mid,jline);
+    }
+  }
+#endif
 }
 #endif
 
