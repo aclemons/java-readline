@@ -59,8 +59,8 @@ Follow instructions under Admin -> Edit/Add release
 8. Upload web
 -------------
 
-scp misc/index.html \
-  <loginname>@shell.sourceforge.net:/home/groups/java-readline/htdocs/
+scp web/index.html \
+  <loginname>@shell.sourceforge.net:/home/groups/j/ja/java-readline/htdocs/
 
 
 9. Post news on SourceForge
