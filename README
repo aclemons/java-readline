@@ -12,7 +12,7 @@ This version implements basic readline functionality like line editing and
 filename completion, which should be just enough for normal use. Not all
 functionality is available with all implementations.
 
-Various people contributed code (see the file ChangeLog for details).
+Various people contributed code (see the file NEWS for details).
 Since I changed some of the code, all bugs are my fault and bugreports
 should be adressed to me.
 
