@@ -68,8 +68,21 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
      rl_readline_name = strdup("JAVA");
    if (is_copy == JNI_TRUE)
     (*env)->ReleaseStringUTFChars(env, jappName, appName);
+#ifdef JavaReadline
+   rl_catch_signals = 0; // don't install signal handlers in JNI code.
+#endif
    rl_initialize();
    using_history();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reset readline's internal states and terminal.
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_cleanupReadlineImpl
+                              (JNIEnv *env, jclass theClass) {
+    rl_free_line_state();
+    rl_cleanup_after_signal();
 }
 
 
@@ -256,10 +269,10 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
 /* Completer function, visible to the readline library                        */
 /* -------------------------------------------------------------------------- */
 
-char *java_completer(char *text, int state) {
+const char *java_completer(char *text, int state) {
   jstring jtext;
   jstring completion;
-  char *line;
+  const char *line;
   jboolean is_copy;
   
   jtext = (*jniEnv)->NewStringUTF(jniEnv,text);
@@ -269,9 +282,9 @@ char *java_completer(char *text, int state) {
   }
 
   completion = (*jniEnv)->CallObjectMethod(jniEnv, jniObject,
-						 jniMethodId, jtext, state);
+					   jniMethodId, jtext, state);
   if (!completion) {
-    return ((char *)NULL);
+    return ((const char *)NULL);
   }
 
   line = (*jniEnv)->GetStringUTFChars(jniEnv,completion,&is_copy);
@@ -293,17 +306,34 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_setCompleterImpl
 /* 			      "(Ljava/lang/String;I)Ljava/lang/String;"); */
 
 /*  (*env)->CallVoidMethod(env, completer_cls, completer, "test", 1); */
-  jniEnv    = env;
-  jniObject = obj;
-  jniClass = (*jniEnv)->GetObjectClass(jniEnv, jniObject);
-  jniClass = (*env)->NewGlobalRef(env, jniClass);
-  jniObject = (*env)->NewGlobalRef(env, jniObject);
-  jniMethodId = (*jniEnv)->GetMethodID(jniEnv, jniClass, "completer",
-				    "(Ljava/lang/String;I)Ljava/lang/String;");
-  if (jniMethodId == 0) {
-    return;
+  if (obj != NULL) {
+    jniEnv    = env;
+    jniObject = obj;
+    jniClass = (*jniEnv)->GetObjectClass(jniEnv, jniObject);
+    jniClass = (*env)->NewGlobalRef(env, jniClass);
+    jniObject = (*env)->NewGlobalRef(env, jniObject);
+    jniMethodId = (*jniEnv)->GetMethodID(jniEnv, jniClass, "completer",
+				"(Ljava/lang/String;I)Ljava/lang/String;");
+    if (jniMethodId == 0) {
+      rl_completion_entry_function = NULL;
+      return;
+    }
+    rl_completion_entry_function = (Function*)java_completer;
   }
-  rl_completion_entry_function = (Function*)java_completer;
+  else {
+    rl_completion_entry_function = NULL;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Returns rl_line_buffer
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jstring JNICALL 
+             Java_org_gnu_readline_Readline_getLineBufferImpl
+                                                 (JNIEnv * env, jclass class) {
+  jniEnv = env;
+  return (*jniEnv)->NewStringUTF(jniEnv, rl_line_buffer);
 }
 
 /* -------------------------------------------------------------------------- */
