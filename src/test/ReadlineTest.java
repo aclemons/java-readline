@@ -77,6 +77,15 @@ public class ReadlineTest {
     Readline.parseAndBind("\"\\e[18~\":	\"Function key F7\"");
     Readline.parseAndBind("\"\\e[19~\":	\"Function key F8\"");
 
+    // Set word break characters
+    try {
+        Readline.setWordBreakCharacters(" \t;");
+    }
+    catch (UnsupportedEncodingException enc) {
+        System.err.println("Could not set word break characters");
+        System.exit(0);
+    }
+
     // set test completer
 
     Readline.setCompleter(new TestCompleter());
@@ -91,6 +100,7 @@ public class ReadlineTest {
       } catch (UnsupportedEncodingException enc) {
 	  System.err.println("caught UnsupportedEncodingException");
       } catch (EOFException eof) {
+        System.out.println();
 	try {
 	  Readline.writeHistoryFile(history.getName());
 	} catch (Exception e) {
