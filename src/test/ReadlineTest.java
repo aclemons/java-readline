@@ -51,7 +51,7 @@ public class ReadlineTest {
 
     try {
       if (args.length > 0)
-	Readline.readInitFile("tinputrc"); // read private inputrc
+	Readline.readInitFile(args[0]);    // read private inputrc
     } catch (IOException e) {              // this deletes any initialization
       System.out.println(e.toString());    // from /etc/inputrc and ~/.inputrc
 	System.exit(0);
