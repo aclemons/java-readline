@@ -1,6 +1,14 @@
 Todo Checklist for new Java-Readline Releases
 =============================================
 
+0. Change version numbers
+-------------------------
+
+VERSION
+web/index.html
+etc/libreadline-java.spec
+
+
 1. Update ChangeLog
 -------------------
 
@@ -17,12 +25,6 @@ Edit users + mail-addresses
 --------------
 
 add most significant news
-
-
-3. Update web/index.html
-------------------------
-
-Change current version number
 
 
 4. Commit everything and tag
