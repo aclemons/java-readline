@@ -143,13 +143,22 @@ public class Readline {
      specific keys. See the file ReadlineTest.java int the test subdir of
      the distribution for an example.
 
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+	  <li>Getline</li>
+        </ul>
+     </p>
+
      @param applicationName Name of application in initialization file
   */
 
   public static void initReadline(String applicationName) {
-    if (iLib != ReadlineLibrary.PureJava) {
+    if (iLib == ReadlineLibrary.GnuReadline || 
+	iLib == ReadlineLibrary.Editline ||
+	iLib == ReadlineLibrary.Getline)
       initReadlineImpl(applicationName);
-    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -161,6 +170,15 @@ public class Readline {
      (C-d). This versino of <tt>readline()</tt> automatically adds the line
      to the in-memory history; use the other version of <tt>readline()</tt>
      if you want explicit control over that feature.
+
+     <p>Supporting implementations:
+        <ul>
+	  <li>GNU-Readline</li>
+	  <li>Editline</li>
+	  <li>Getline</li>
+	  <li>PureJava</li>
+        </ul>
+     </p>
 
      @param prompt Prompt to display
      @return The string the user entered or 'null' if there was no input.
