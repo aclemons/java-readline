@@ -16,6 +16,10 @@ public class ReadlineConsole extends InteractiveConsole {
     }
     public ReadlineConsole(PyObject locals, String filename) {
         super(locals,filename);
+	try {
+	  Readline.load(ReadlineLibrary.Editline);
+	} catch (Exception e) {
+	}
 	Readline.initReadline("jpython");
     }
 
@@ -33,6 +37,8 @@ public class ReadlineConsole extends InteractiveConsole {
            return Readline.readline(prompt==null ? "" : prompt.toString());
         } catch (java.io.EOFException eofe) {
            throw new PyException(Py.EOFError);
+        } catch (java.io.IOException ioe) {
+           throw new PyException();
         } catch (java.io.UnsupportedEncodingException e) {
            throw new PyException();
         }
