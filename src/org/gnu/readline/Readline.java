@@ -160,7 +160,7 @@ public class Readline {
   */
   public static String readline(String prompt) throws EOFException,
                                     IOException, UnsupportedEncodingException {
-      return readline(prompt, false);
+      return readline(prompt,true);
   }
 
   /**
@@ -183,9 +183,12 @@ public class Readline {
 
   public static String readline(String prompt, boolean addToHist)
                throws EOFException, IOException, UnsupportedEncodingException {
-    if (iLib != ReadlineLibrary.PureJava)
-      return readlineImpl(prompt);
-    else {
+    if (iLib != ReadlineLibrary.PureJava) {
+      String line = readlineImpl(prompt);
+      if ((line != null) && (addToHist))
+          addToHistory(line);
+      return line;
+    } else {
       System.out.print(prompt);
       if (iReader == null)
         iReader = new BufferedReader(new InputStreamReader(System.in));
@@ -194,8 +197,6 @@ public class Readline {
         throw new EOFException("EOF");
       if (line.length() == 0)
           line = null;
-      if ((line != null) && (addToHist))
-          addToHistory(line);
       return line;
     }
   }
