@@ -55,6 +55,222 @@
 #endif
 
 /* -------------------------------------------------------------------------- */
+/* Internal status variables of the backing implementation. The functions     */
+/* [sg]etVar\(String\|Int\)Impl() use these arrays. Since the functions use   */
+/* index-based access, it is important that the variables are in sync with    */
+/* the constants in Readline.java.                                            */
+/* Also, some of the variables are actually read-only. You should check the   */
+/* documentation/source before using setVar                                   */
+/*                                                                            */
+/* TODO: redirect all variables marked as const in globalStringInternals to   */
+/* static buffers, so that free() works in setVarStringImpl                   */
+/* -------------------------------------------------------------------------- */
+
+static int undefinedInternalInt = 0;
+static char* undefinedInternalString = NULL;
+static char undefinedInternalChar = '0';
+
+#ifdef JavaReadline
+static int* globalIntegerInternals[] = {
+  &rl_readline_version,
+  &rl_gnu_readline_p,
+  &rl_readline_state,
+  &rl_editing_mode,
+  &rl_insert_mode,
+  &rl_point,
+  &rl_end,
+  &rl_mark,
+  &rl_done,
+  &rl_pending_input,
+  &rl_dispatching,
+  &rl_explicit_arg,
+  &rl_numeric_arg,
+  &rl_erase_empty_line,
+  &rl_already_prompted,
+  &rl_num_chars_to_read,
+  &rl_catch_signals,
+  &rl_catch_sigwinch,
+  &rl_filename_completion_desired,
+  &rl_filename_quoting_desired,
+  &rl_attempted_completion_over,
+  &rl_completion_type,
+  &rl_completion_append_character,
+  &rl_completion_suppress_append,
+  &rl_completion_query_items,
+  &rl_completion_mark_symlink_dirs,
+  &rl_ignore_completion_duplicates,
+  &rl_inhibit_completion,
+
+  &history_base,
+  &history_length,
+  &history_max_entries,
+  &history_quotes_inhibit_expansion,        /* index: 31 */
+  NULL
+};
+
+static char** globalStringInternals[] = {
+ /* const */ &rl_library_version,
+ /* const */ &rl_readline_name,
+ &rl_prompt,
+ &rl_line_buffer,
+ /* const */ &rl_terminal_name,
+ &rl_executing_macro,
+ /* const */ &rl_basic_word_break_characters,
+ /* const */ &rl_completer_word_break_characters,
+ /* const */ &rl_completer_quote_characters,
+ /* const */ &rl_basic_quote_characters,
+ /* const */ &rl_filename_quote_characters,
+ /* const */ &rl_special_prefixes,
+
+ &history_word_delimiters,
+ &history_no_expand_chars,
+ &history_search_delimiter_chars,        /* index: 14 */
+ NULL
+};
+
+/* unused: needs [sg]etVarCharImpl */
+
+static char* globalCharInternals[] = {
+ &history_expansion_char,
+ &history_subst_char,
+ &history_comment_char,
+ NULL
+};
+#endif
+
+#ifdef JavaEditline
+static int* globalIntegerInternals[] = {
+  &undefinedInternalInt, /*  &rl_readline_version, */
+  &undefinedInternalInt, /*  &rl_gnu_readline_p, */
+  &undefinedInternalInt, /*  &rl_readline_state, */
+  &undefinedInternalInt, /*  &rl_editing_mode, */
+  &undefinedInternalInt, /*  &rl_insert_mode, */
+  &undefinedInternalInt, /*  &rl_point, */
+  &undefinedInternalInt, /*  &rl_end, */
+  &undefinedInternalInt, /*  &rl_mark, */
+  &undefinedInternalInt, /*  &rl_done, */
+  &undefinedInternalInt, /*  &rl_pending_input, */
+  &undefinedInternalInt, /*  &rl_dispatching, */
+  &undefinedInternalInt, /*  &rl_explicit_arg, */
+  &undefinedInternalInt, /*  &rl_numeric_arg, */
+  &undefinedInternalInt, /*  &rl_erase_empty_line, */
+  &undefinedInternalInt, /*  &rl_already_prompted, */
+  &undefinedInternalInt, /*  &rl_num_chars_to_read, */
+  &undefinedInternalInt, /*  &rl_catch_signals, */
+  &undefinedInternalInt, /*  &rl_catch_sigwinch, */
+  &undefinedInternalInt, /*  &rl_filename_completion_desired, */
+  &undefinedInternalInt, /*  &rl_filename_quoting_desired, */
+  &undefinedInternalInt, /*  &rl_attempted_completion_over, */
+  &undefinedInternalInt, /*  &rl_completion_type, */
+  &undefinedInternalInt, /*  &rl_completion_append_character, */
+  &undefinedInternalInt, /*  &rl_completion_suppress_append, */
+  &undefinedInternalInt, /*  &rl_completion_query_items, */
+  &undefinedInternalInt, /*  &rl_completion_mark_symlink_dirs, */
+  &undefinedInternalInt, /*  &rl_ignore_completion_duplicates, */
+  &undefinedInternalInt, /*  &rl_inhibit_completion, */
+
+  &undefinedInternalInt, /*  &history_base, */
+  &undefinedInternalInt, /*  &history_length, */
+  &undefinedInternalInt, /*  &history_max_entries, */
+  &undefinedInternalInt, /*  &history_quotes_inhibit_expansion, */
+  NULL
+};
+
+static char** globalStringInternals[] = {
+  &undefinedInternalString, /* const  &rl_library_version, */
+  &undefinedInternalString, /* const  &rl_readline_name, */
+  &undefinedInternalString, /*  &rl_prompt, */
+  &undefinedInternalString, /*  &rl_line_buffer, */
+  &undefinedInternalString, /* const  &rl_terminal_name, */
+  &undefinedInternalString, /*  &rl_executing_macro, */
+  &undefinedInternalString, /* const  &rl_basic_word_break_characters, */
+  &undefinedInternalString, /* const  &rl_completer_word_break_characters, */
+  &undefinedInternalString, /* const  &rl_completer_quote_characters, */
+  &undefinedInternalString, /* const  &rl_basic_quote_characters, */
+  &undefinedInternalString, /* const  &rl_filename_quote_characters, */
+  &undefinedInternalString, /* const  &rl_special_prefixes, */
+
+  &undefinedInternalString, /*  &history_word_delimiters, */
+  &undefinedInternalString, /*  &history_no_expand_chars, */
+  &undefinedInternalString, /*  &history_search_delimiter_chars */
+};
+
+/* unused: needs [sg]etVarCharImpl */
+
+static char* globalCharInternals[] = {
+  &undefinedInternalChar, /*  &history_expansion_char, */
+  &undefinedInternalChar, /*  &history_subst_char, */
+  &undefinedInternalChar, /*  &history_comment_char */
+};
+#endif
+
+#ifdef JavaGetline
+static int* globalIntegerInternals[] = {
+  &undefinedInternalInt, /*  &rl_readline_version, */
+  &undefinedInternalInt, /*  &rl_gnu_readline_p, */
+  &undefinedInternalInt, /*  &rl_readline_state, */
+  &undefinedInternalInt, /*  &rl_editing_mode, */
+  &undefinedInternalInt, /*  &rl_insert_mode, */
+  &undefinedInternalInt, /*  &rl_point, */
+  &undefinedInternalInt, /*  &rl_end, */
+  &undefinedInternalInt, /*  &rl_mark, */
+  &undefinedInternalInt, /*  &rl_done, */
+  &undefinedInternalInt, /*  &rl_pending_input, */
+  &undefinedInternalInt, /*  &rl_dispatching, */
+  &undefinedInternalInt, /*  &rl_explicit_arg, */
+  &undefinedInternalInt, /*  &rl_numeric_arg, */
+  &undefinedInternalInt, /*  &rl_erase_empty_line, */
+  &undefinedInternalInt, /*  &rl_already_prompted, */
+  &undefinedInternalInt, /*  &rl_num_chars_to_read, */
+  &undefinedInternalInt, /*  &rl_catch_signals, */
+  &undefinedInternalInt, /*  &rl_catch_sigwinch, */
+  &undefinedInternalInt, /*  &rl_filename_completion_desired, */
+  &undefinedInternalInt, /*  &rl_filename_quoting_desired, */
+  &undefinedInternalInt, /*  &rl_attempted_completion_over, */
+  &undefinedInternalInt, /*  &rl_completion_type, */
+  &undefinedInternalInt, /*  &rl_completion_append_character, */
+  &undefinedInternalInt, /*  &rl_completion_suppress_append, */
+  &undefinedInternalInt, /*  &rl_completion_query_items, */
+  &undefinedInternalInt, /*  &rl_completion_mark_symlink_dirs, */
+  &undefinedInternalInt, /*  &rl_ignore_completion_duplicates, */
+  &undefinedInternalInt, /*  &rl_inhibit_completion, */
+
+  &undefinedInternalInt, /*  &history_base, */
+  &undefinedInternalInt, /*  &history_length, */
+  &undefinedInternalInt, /*  &history_max_entries, */
+  &undefinedInternalInt, /*  &history_quotes_inhibit_expansion, */
+  NULL
+};
+
+static char** globalStringInternals[] = {
+  &undefinedInternalString, /* const  &rl_library_version, */
+  &undefinedInternalString, /* const  &rl_readline_name, */
+  &undefinedInternalString, /*  &rl_prompt, */
+  &undefinedInternalString, /*  &rl_line_buffer, */
+  &undefinedInternalString, /* const  &rl_terminal_name, */
+  &undefinedInternalString, /*  &rl_executing_macro, */
+  &undefinedInternalString, /* const  &rl_basic_word_break_characters, */
+  &undefinedInternalString, /* const  &rl_completer_word_break_characters, */
+  &undefinedInternalString, /* const  &rl_completer_quote_characters, */
+  &undefinedInternalString, /* const  &rl_basic_quote_characters, */
+  &undefinedInternalString, /* const  &rl_filename_quote_characters, */
+  &undefinedInternalString, /* const  &rl_special_prefixes, */
+
+  &undefinedInternalString, /*  &history_word_delimiters, */
+  &undefinedInternalString, /*  &history_no_expand_chars, */
+  &undefinedInternalString, /*  &history_search_delimiter_chars */
+};
+
+/* unused: needs [sg]etVarCharImpl */
+
+static char* globalCharInternals[] = {
+  &undefinedInternalChar, /*  &history_expansion_char, */
+  &undefinedInternalChar, /*  &history_subst_char, */
+  &undefinedInternalChar, /*  &history_comment_char */
+};
+#endif
+
+/* -------------------------------------------------------------------------- */
 /* Global buffer. The buffer is allocated when needed and grows in steps of   */
 /* 1024. It is never freed, but this is not a problem since in realistic      */
 /* environments it should never be larger than a few KB. This strategy will   */
@@ -523,6 +739,8 @@ JNIEXPORT jstring JNICALL
 
 /* -------------------------------------------------------------------------- */
 /* Sets rl_completer_word_break_characters                                    */
+/* You should not use this function, since rl_completer_word_break_characters */
+/* is const char* !!!                                                         */
 /* -------------------------------------------------------------------------- */
 
 #ifndef JavaGetline
@@ -558,6 +776,97 @@ JNIEXPORT void JNICALL
   rl_completer_word_break_characters = word_break_buffer;
 }
 #endif
+
+/* -------------------------------------------------------------------------- */
+/* Sets an internal integer variable                                          */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jint JNICALL 
+  Java_org_gnu_readline_Readline_setVarIntImpl(JNIEnv *env, jclass class,
+                                                     jint jindex, jint jvalue) {
+  int oldValue;
+  oldValue = *(globalIntegerInternals[(int) jindex]);
+  *(globalIntegerInternals[(int) jindex]) = (int) jvalue;
+  return (jint) oldValue;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Queries an internal integer variable                                       */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jint JNICALL 
+  Java_org_gnu_readline_Readline_getVarIntImpl(JNIEnv *env, jclass class,
+                                                                   jint jindex) {
+  return (jint) *(globalIntegerInternals[(int) jindex]);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sets an internal string variable                                           */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jstring JNICALL 
+  Java_org_gnu_readline_Readline_setVarStringImpl(JNIEnv *env, jclass class,
+                                                  jint jindex, jstring jvalue) {
+  char *oldValue;
+  char **value;
+  const char *newValue;
+  jboolean is_copy;
+
+  /* save old value */
+
+  oldValue = strdup(*(globalStringInternals[(int) jindex]));
+  if (!oldValue) {
+    jclass newExcCls;
+    newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;    
+  }
+
+  /* read new value from argument */
+
+  newValue = (*env)->GetStringUTFChars(env,jvalue,&is_copy);
+  if (!utf2ucs(newValue)) {
+    jclass newExcCls;
+    if (is_copy == JNI_TRUE)
+      (*env)->ReleaseStringUTFChars(env,jvalue,newValue);
+    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
+    if (newExcCls != NULL)
+      (*env)->ThrowNew(env,newExcCls,"");
+    return;
+  }
+  if (is_copy == JNI_TRUE)
+    (*env)->ReleaseStringUTFChars(env,jvalue,newValue);
+  
+  /* set new value */
+
+  value = globalStringInternals[(int) jindex];
+  // TODO: currently a memory-leak, but otherwise it crashes
+  // free(*value);
+  *value = strdup(buffer);
+  
+  /* return old value */
+  
+  ucs2utf(oldValue);
+  free(oldValue);
+  return (*env)->NewStringUTF(env,buffer);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Queries an internal string variable                                        */
+/* -------------------------------------------------------------------------- */
+
+JNIEXPORT jstring JNICALL 
+  Java_org_gnu_readline_Readline_getVarStringImpl(JNIEnv *env, jclass class,
+                                                                  jint jindex) {
+  char *value;
+  value = *(globalStringInternals[(int) jindex]);
+  if (value) {
+    ucs2utf(value);
+    return (*env)->NewStringUTF(env,buffer);
+  }
+  return NULL;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Convert utf8-string to ucs1-string                   .                     */
