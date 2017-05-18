@@ -3,6 +3,7 @@
  * of GNU readline.
  *
  * Java Wrapper Copyright (c) 1998-2001 by Bernhard Bablok (mail@bablokb.de)
+ * Java Wrapper Copyright (c) 2017 by Andrew Clemons (andrew.clemons@gmail.com)
  *
  * This program is free software; you can redistribute it and or modify
  * it under the terms of the GNU Library General Public License as published
@@ -296,8 +297,8 @@ static char* globalCharInternals[] = {
 /* environments it should never be larger than a few KB. This strategy will   */
 /* prevent constant malloc/free-cycles and keeps the code clean.              */
 /*                                                                            */
-/* TODO: buffer is changed by utf82ucs and ucs2utf8, but this is not really   */
-/*       transparent. Add some additional comments.                           */
+/* TODO: buffer is changed by fromjstring and tojstring, but this is not      */
+/*       really transparent. Add some additional comments.                    */
 /*       Change the variable name buffer to globalBuffer.                     */
 /* -------------------------------------------------------------------------- */
 
@@ -306,8 +307,9 @@ static size_t bufLength = 0;
 
 static char*  word_break_buffer = NULL;
 
-static char* utf2ucs(const char *utf8);
-static char* ucs2utf(const char *ucs);
+static char* fromjstring(const JNIEnv *env, jstring value);
+static jstring tojstring(const JNIEnv *env, const char* value);
+
 static int   allocBuffer(size_t n);
 
 static jobject   jniObject;
@@ -321,16 +323,11 @@ static JNIEnv*   jniEnv;
 
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
                               (JNIEnv *env, jclass theClass, jstring jappName) {
-   const char *appName;
-   jboolean is_copy;
-
-   appName = (*env)->GetStringUTFChars(env,jappName,&is_copy);
-   if (appName && strlen(appName))
-     rl_readline_name = strdup(appName);
-   else
+   if (fromjstring(env, jappName)) {
+     rl_readline_name = strdup(buffer);
+   } else
      rl_readline_name = strdup("JAVA");
-   if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env, jappName, appName);
+
 #ifdef JavaReadline
    rl_catch_signals = 0; /* don't install signal handlers in JNI code. */
 #endif
@@ -372,25 +369,10 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_hasTerminalImpl
 
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_addToHistoryImpl
                                (JNIEnv *env, jclass theClass, jstring jline) {
-
-  const char *line;
-  jboolean is_copy;
-
-  line = (*env)->GetStringUTFChars(env,jline,&is_copy);
-  if (!utf2ucs(line)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env, jline, line);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
-    return;
+  if (fromjstring(env, jline)) {
+    add_history(buffer);
   }
 
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env, jline, line);
-
-  add_history(buffer);
   return;
 }
 
@@ -400,29 +382,12 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_addToHistoryImpl
 
 JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
                                (JNIEnv *env, jclass theClass, jstring jprompt) {
-
-  const char *prompt;
-  char *input;
-  jboolean is_copy;
-
-  /* retrieve prompt argument and convert to ucs ---------------------------- */
-
-  prompt = (*env)->GetStringUTFChars(env,jprompt,&is_copy);
-  if (!utf2ucs(prompt)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env, jprompt, prompt);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jprompt)) {
     return NULL;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env, jprompt, prompt);
 
-  /* use gnu-readline, convert string to utf8 ------------------------------- */
+  char *input = readline(buffer);
 
-  input = readline(buffer);
   if (input == NULL) {
     jclass     newExcCls;
     newExcCls = (*env)->FindClass(env,"java/io/EOFException");
@@ -430,8 +395,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_readlineImpl
       (*env)->ThrowNew(env,newExcCls,"");
     return NULL;
   } else if (*input) {
-    ucs2utf(input);
-    return (*env)->NewStringUTF(env,buffer);
+    return tojstring(env, input);
   } else
     return NULL;
 }
@@ -461,7 +425,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
   hist = history_list();
   if (hist != NULL) {
     while (*hist != NULL) {
-      jline = (*env)->NewStringUTF(env,(*hist)->line);
+      jline = tojstring(env, (*hist)->line);
       (*env)->CallBooleanMethod(env,jcoll,mid,jline);
       hist++;
     }
@@ -472,8 +436,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_getHistoryImpl
   for (pos = 0; pos < history_length; pos++) {
     histSingle = history_get(pos + 1);
     if (histSingle) {
-      ucs2utf(histSingle->line);
-      jline = (*env)->NewStringUTF(env,buffer);
+      jline = tojstring(env, histSingle->line);
       (*env)->CallBooleanMethod(env,jcoll,mid,jline);
     }
   }
@@ -500,8 +463,7 @@ JNIEXPORT jstring JNICALL Java_org_gnu_readline_Readline_getHistoryLineImpl
   HIST_ENTRY *hist = NULL;
 
   if ((hist = history_get ((int) (i + 1))) != NULL) {
-    ucs2utf(hist->line);
-    return (*env)->NewStringUTF(env,buffer);
+    return tojstring(env, hist->line);
   }
   return NULL;
 }
@@ -525,23 +487,9 @@ JNIEXPORT jint JNICALL Java_org_gnu_readline_Readline_getHistorySizeImpl
 #ifdef JavaReadline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  const char *filename;
-  jboolean is_copy;
-
-  /* retrieve filename argument and convert to ucs -------------------------- */
-
-  filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jfilename,filename);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jfilename)) {
     return;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jfilename,filename);
 
   /* pass to readline function ---------------------------------------------- */
 
@@ -562,23 +510,9 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readInitFileImpl
 #ifdef JavaReadline
 JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
                                 (JNIEnv *env, jclass theClass, jstring jline) {
-  const char *line;
-  jboolean is_copy;
-
-  /* retrieve line argument and convert to ucs -------------------------- */
-
-  line = (*env)->GetStringUTFChars(env,jline,&is_copy);
-  if (!utf2ucs(line)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jline,line);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jline)) {
     return (jboolean) JNI_FALSE;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jline,line);
 
   /* pass to readline function ---------------------------------------------- */
 
@@ -596,24 +530,10 @@ JNIEXPORT jboolean JNICALL Java_org_gnu_readline_Readline_parseAndBindImpl
 #ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  const char *filename;
-  jboolean is_copy;
-    
-  /* retrieve filename argument and convert to ucs -------------------------- */
-
-  filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jfilename,filename);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jfilename)) {
     return;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jfilename,filename);
-  
+
   /* pass to history function ----------------------------------------------- */
 
   read_history(buffer);
@@ -627,24 +547,10 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_readHistoryFileImpl
 #ifndef JavaGetline
 JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_writeHistoryFileImpl
                             (JNIEnv *env, jclass theClass, jstring jfilename) {
-  const char *filename;
-  jboolean is_copy;
-  
-  /* retrieve filename argument and convert to ucs -------------------------- */
-
-  filename = (*env)->GetStringUTFChars(env,jfilename,&is_copy);
-  if (!utf2ucs(filename)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jfilename,filename);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jfilename)) {
     return;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jfilename,filename);
-  
+
   /* pass to history function ----------------------------------------------- */
 
   write_history(buffer);
@@ -662,8 +568,8 @@ const char *java_completer(char *text, int state) {
   jstring completion;
   const char *line;
   jboolean is_copy;
-  
-  jtext = (*jniEnv)->NewStringUTF(jniEnv,text);
+
+  jtext = tojstring(jniEnv, text);
 
   if (jniMethodId == 0) {
     return ((const char *) NULL);
@@ -675,7 +581,8 @@ const char *java_completer(char *text, int state) {
     return ((const char *)NULL);
   }
 
-  line = (*jniEnv)->GetStringUTFChars(jniEnv,completion,&is_copy);
+  line = fromjstring(jniEnv, completion);
+
   return line;
 }
 #endif
@@ -725,7 +632,7 @@ JNIEXPORT jstring JNICALL
              Java_org_gnu_readline_Readline_getLineBufferImpl
                                                  (JNIEnv * env, jclass class) {
   jniEnv = env;
-  return (*jniEnv)->NewStringUTF(jniEnv, rl_line_buffer);
+  return tojstring(jniEnv, rl_line_buffer);
 }
 #endif
 
@@ -734,19 +641,17 @@ JNIEXPORT jstring JNICALL
 /* -------------------------------------------------------------------------- */
 
 #ifndef JavaGetline
-JNIEXPORT jstring JNICALL 
+JNIEXPORT jstring JNICALL
              Java_org_gnu_readline_Readline_getWordBreakCharactersImpl
                                                  (JNIEnv * env, jclass class) {
   jstring word_break_characters;
 
   jniEnv = env;
   if (rl_completer_word_break_characters == 0) {
-    word_break_characters =
-        (*jniEnv)->NewStringUTF(jniEnv, rl_basic_word_break_characters);
-  
+    word_break_characters = tojstring(jniEnv, rl_basic_word_break_characters);
+
   } else {
-    word_break_characters =
-        (*jniEnv)->NewStringUTF(jniEnv, rl_completer_word_break_characters);
+    word_break_characters = tojstring(jniEnv, rl_completer_word_break_characters);
   }
 
   return word_break_characters;
@@ -760,25 +665,13 @@ JNIEXPORT jstring JNICALL
 /* -------------------------------------------------------------------------- */
 
 #ifndef JavaGetline
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
                     Java_org_gnu_readline_Readline_setWordBreakCharactersImpl
                       (JNIEnv * env, jclass class, jstring jword_break_chars) {
-  const char * word_break_chars;
-  jboolean is_copy;
-  
-  word_break_chars = (*env)->GetStringUTFChars(env,jword_break_chars,&is_copy);
-  if (!utf2ucs(word_break_chars)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jword_break_chars,word_break_chars);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jword_break_chars)) {
     return;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jword_break_chars,word_break_chars);
-  
+
   if (word_break_buffer)
     free(word_break_buffer);
   word_break_buffer = strdup(buffer);
@@ -787,7 +680,7 @@ JNIEXPORT void JNICALL
     newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
     if (newExcCls != NULL)
       (*env)->ThrowNew(env,newExcCls,"");
-    return;    
+    return;
   }
   rl_completer_word_break_characters = word_break_buffer;
 }
@@ -797,7 +690,7 @@ JNIEXPORT void JNICALL
 /* Sets an internal integer variable                                          */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jint JNICALL 
+JNIEXPORT jint JNICALL
   Java_org_gnu_readline_Readline_setVarIntImpl(JNIEnv *env, jclass class,
                                                      jint jindex, jint jvalue) {
   int oldValue;
@@ -810,7 +703,7 @@ JNIEXPORT jint JNICALL
 /* Queries an internal integer variable                                       */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jint JNICALL 
+JNIEXPORT jint JNICALL
   Java_org_gnu_readline_Readline_getVarIntImpl(JNIEnv *env, jclass class,
                                                                    jint jindex) {
   return (jint) *(globalIntegerInternals[(int) jindex]);
@@ -820,7 +713,7 @@ JNIEXPORT jint JNICALL
 /* Sets an internal string variable                                           */
 /* -------------------------------------------------------------------------- */
 
-JNIEXPORT jstring JNICALL 
+JNIEXPORT jstring JNICALL
   Java_org_gnu_readline_Readline_setVarStringImpl(JNIEnv *env, jclass class,
                                                   jint jindex, jstring jvalue) {
   char *oldValue;
@@ -843,33 +736,23 @@ JNIEXPORT jstring JNICALL
     oldValue = NULL;
 
   /* read new value from argument */
-
-  newValue = (*env)->GetStringUTFChars(env,jvalue,&is_copy);
-  if (!utf2ucs(newValue)) {
-    jclass newExcCls;
-    if (is_copy == JNI_TRUE)
-      (*env)->ReleaseStringUTFChars(env,jvalue,newValue);
-    newExcCls = (*env)->FindClass(env,"java/io/UnsupportedEncodingException");
-    if (newExcCls != NULL)
-      (*env)->ThrowNew(env,newExcCls,"");
+  if (!fromjstring(env, jvalue)) {
     return NULL;
   }
-  if (is_copy == JNI_TRUE)
-    (*env)->ReleaseStringUTFChars(env,jvalue,newValue);
-  
+
   /* set new value */
 
   value = globalStringInternals[(int) jindex];
   /* TODO: currently a memory-leak, but otherwise it crashes */
   /* free(*value); */
   *value = strdup(buffer);
-  
+
   /* return old value */
-  
+
   if (oldValue) {
-    ucs2utf(oldValue);
+    jstring result = tojstring(env, oldValue);
     free(oldValue);
-    return (*env)->NewStringUTF(env,buffer);
+    return result;
   } else
     return NULL;
 }
@@ -884,83 +767,74 @@ JNIEXPORT jstring JNICALL
   char *value;
   value = *(globalStringInternals[(int) jindex]);
   if (value) {
-    ucs2utf(value);
-    return (*env)->NewStringUTF(env,buffer);
+    return tojstring(env, value);
   }
   return NULL;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Convert utf8-string to ucs1-string                   .                     */
+/* Convert jstring to c-string                                                */
 /* -------------------------------------------------------------------------- */
 
-char* utf2ucs(const char *utf8) {
-  const char *pin;
-  char *pout, *ucs;
-  unsigned char current, next;
-  int i;
-  size_t n;
+char* fromjstring(const JNIEnv *env, jstring value) {
+  const jclass jstringClass = (*env)->GetObjectClass(env, value);
+  const jmethodID getBytesMethodId = (*env)->GetMethodID(env, jstringClass, "getBytes", "()[B");
 
-  n = strlen(utf8);
-  if (2*n > bufLength) {
-    if (allocBuffer(2*n))
-      return NULL;
+  const jbyteArray jstringJBytes = (jbyteArray) (*env)->CallObjectMethod(env, value, getBytesMethodId);
+
+  const jsize length = (*env)->GetArrayLength(env, jstringJBytes);
+
+  if (length < 1) {
+    (*env)->DeleteLocalRef(env, jstringJBytes);
+
+    return NULL;
   }
 
-  for (i=0,pin=utf8,pout=buffer; i<bufLength && *pin; i++,pin++,pout++) {
-    current = *pin;
-    if (current >= 0xE0) {                   /* we support only two-byte utf8 */
+  const jbyte* bytes = (*env)->GetByteArrayElements(env, jstringJBytes, NULL);
+
+  if (2*length > bufLength) {
+    if (allocBuffer(2*length)) {
+      (*env)->ReleaseByteArrayElements(env, jstringJBytes, bytes, JNI_ABORT);
+      (*env)->DeleteLocalRef(env, jstringJBytes);
+
+      const jclass newExcCls = (*env)->FindClass(env,"java/lang/OutOfMemoryError");
+      if (newExcCls != NULL)
+        (*env)->ThrowNew(env,newExcCls,"");
+
       return NULL;
-    } else if ((current & 0x80) == 0)        /* one-byte utf8                 */
-      *pout = current;
-    else {                                   /* two-byte utf8                 */
-      next = *(++pin);
-      if (next >= 0xC0) {                    /* illegal coding                */
-	return NULL;
-      }
-      *pout = ((current & 3) << 6) +         /* first two bits of first byte  */
-	(next & 63);                         /* last six bits of second byte  */
     }
   }
-  if (i<bufLength)
-    *pout = '\0';
+
+  int i;
+  for (i = 0; i < length; i++) {
+    buffer[i] = bytes[i];
+  }
+
+  buffer[length] = '\0';
+
+  (*env)->ReleaseByteArrayElements(env, jstringJBytes, bytes, JNI_ABORT);
+  (*env)->DeleteLocalRef(env, jstringJBytes);
+
   return buffer;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Convert ucs1-string to utf8-string                   .                     */
+/* Convert c-string to j-string                                               */
 /* -------------------------------------------------------------------------- */
 
-char* ucs2utf(const char *ucs) {
-  const char *pin;
-  char *pout;
-  unsigned char current;
-  int i;
-  size_t n;
+jstring tojstring(const JNIEnv *env, const char* value) {
+  const jclass jstringClass = (*env)->FindClass(env,"java/lang/String");
+  const jmethodID constructorMethodId = (*env)->GetMethodID(env, jstringClass, "<init>", "([B)V");
 
-  n = strlen(ucs);
-  if (2*n > bufLength) {
-    if (allocBuffer(2*n))
-      return NULL;
-  }
+  jbyteArray inputByteArray = (*env)->NewByteArray(env, strlen(value));
 
-  for (i=0,pin=ucs,pout=buffer; i<bufLength && *pin; i++,pin++,pout++) {
-    current = *pin;
-    if (current < 0x80)                      /* one-byte utf8                 */
-      *pout = current;
-    else {                                   /* two-byte utf8                 */
-      *pout = 0xC0 + (current>>6);           /* first two bits                */
-      pout++, i++;                           /* examine second byte           */
-      if (i>=bufLength) {                    /* cannot convert last byte      */
-	*(--pout) = '\0';
-	return buffer;
-      }
-      *pout = 0x80 + (current & 63);         /* last six bits                 */
-    }
-  }
-  if (i<bufLength)
-    *pout = '\0';
-  return buffer;
+  void *temp = (*env)->GetPrimitiveArrayCritical(env, (jarray) inputByteArray, 0);
+
+  memcpy(temp, value, strlen(value));
+
+  (*env)->ReleasePrimitiveArrayCritical(env, inputByteArray, temp, 0);
+
+  return (jstring) (*env)->NewObject(env, jstringClass, constructorMethodId, inputByteArray);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -1,11 +1,8 @@
 For release 0.8.1:
   - getVar()/setVar() (Bernhard)
-  - allow compiling with clang
-  - allow compiling against modern libedit
-  - fix collision with getline(3)
-  - added bats test case and running on travis ci
-  - allow compiling javadocs with JDK 8 and later
-  - do not clobber customer CFLAGS
+  - unicode support (Andrew)
+  - added bats test case and running on travis ci (Andrew)
+  - various build fixes (Andrew)
 
 For release 0.8.0:
   - added JScheme completer. Provided by Samer Abdallah

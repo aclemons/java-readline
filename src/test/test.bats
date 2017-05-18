@@ -52,10 +52,6 @@ has_iso8859_15() {
   locale -a | grep de_DE@euro > /dev/null 2>&1
 }
 
-supports_utf8() {
-  1
-}
-
 assert_var() {
   [ "$(LANG="$4" "$JAVA_HOME/bin/java" -Dfile.encoding="$5" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestVar "$1" "$2" "$3" | sed -n '1p')" = "$3" ]
 }
@@ -217,23 +213,7 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_prompt "GnuReadline" "$(printf "%b" "\xc3\xa4tzend>")" "en_US.UTF-8" "UTF-8"
-}
-
-@test "Editline handles simple utf8 prompt" {
-  if ! is_editline ; then
-    skip "java-readline not built with Editline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
-  assert_prompt "Editline" "$(printf "%b" "\xc3\xa4tzend>")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "PureJava handles simple utf8 prompt" {
@@ -245,20 +225,12 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_input "GnuReadline" "$(printf "%b" "Hello World\xc3\xa4")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "Editline handles simple utf8 input" {
   if ! is_editline ; then
     skip "java-readline not built with Editline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
   fi
 
   assert_input "Editline" "$(printf "%b" "Hello World\xc3\xa4")" "en_US.UTF-8" "UTF-8"
@@ -273,10 +245,6 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_history "GnuReadline" "$(printf "%b" "Hello World\xc3\xa4")" "en_US.UTF-8" "UTF-8"
 }
 
@@ -285,20 +253,12 @@ assert_history() {
     skip "java-readline not built with Editline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_history "Editline" "$(printf "%b" "Hello World\xc3\xa4")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "GnuReadline handles utf8 outside BMP prompt" {
   if ! is_readline ; then
     skip "java-readline not built with GnuReadline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
   fi
 
   assert_prompt "GnuReadline" "$(printf "%b" "\xf0\x9f\x8c\x8b>")" "en_US.UTF-8" "UTF-8"
@@ -313,20 +273,12 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_input "GnuReadline" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "Editline handles utf8 outside BMP input" {
   if ! is_editline ; then
     skip "java-readline not built with Editline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
   fi
 
   assert_input "Editline" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
@@ -341,20 +293,12 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_history "GnuReadline" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "Editline handles utf8 outside BMP history" {
   if ! is_editline ; then
     skip "java-readline not built with Editline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
   fi
 
   assert_history "Editline" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
@@ -397,20 +341,12 @@ assert_history() {
     skip "java-readline not built with GnuReadline support"
   fi
 
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
-  fi
-
   assert_var "GnuReadline" "RL_LINE_BUFFER" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
 }
 
 @test "Editline handles utf8 outside the bmp var" {
   if ! is_editline ; then
     skip "java-readline not built with Editline support"
-  fi
-
-  if ! supports_utf8 ; then
-    skip "java-readline currently mangles utf-8 input"
   fi
 
   assert_var "Editline" "RL_LINE_BUFFER" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
