@@ -1003,6 +1003,7 @@ public class Readline {
 			         new InputStreamReader(System.in, iEncoding));
       }
       String line = iReader.readLine();
+      System.out.println("");
       if (line == null)
         throw new EOFException("EOF");
       if (line.length() == 0)

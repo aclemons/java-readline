@@ -180,7 +180,12 @@ rpm: src-dist
 	cp $(TARGET)-$(VERSION)-src.tar.gz $(RPM_BASE)/SOURCES
 	rpm --define _topdir$(RPM_BASE) -ba $(RPM_BASE)/SPECS/libreadline-java.spec
 
-test: $(JAR) build-native
+test-classes: jar build-native
+
+bats: test-classes
+	./src/test/test.bats
+
+test: test-classes
 	$(JAVA_HOME)/bin/java  -Djava.library.path=. -jar $(JAR) src/test/tinputrc $(ARGS)
 
 clean:

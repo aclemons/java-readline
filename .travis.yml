@@ -1,0 +1,26 @@
+sudo: required
+dist: trusty
+language: c
+
+before_install:
+  - sudo add-apt-repository ppa:duggan/bats --yes
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq bats libedit-dev libedit2 openjdk-6-jdk openjdk-7-jdk oracle-java7-installer oracle-java8-installer
+
+before_script:
+  - jdk_switcher use $JDK
+
+compiler:
+  - clang
+  - gcc
+
+env:
+  - JDK=openjdk6
+  - JDK=openjdk7
+  - JDK=oraclejdk7
+  - JDK=openjdk8
+  - JDK=oraclejdk8
+
+script:
+  - make clean bats T_LIBS="JavaEditline JavaReadline JavaGetline" CC=$CC
+
