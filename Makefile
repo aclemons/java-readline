@@ -27,7 +27,7 @@
 # $Revision$
 #
 
-export 
+export
 
 # what to build   -------------------------------------------------------------
 
@@ -36,12 +36,8 @@ T_LIBS    = JavaReadline
 # java-compiler flavor   ------------------------------------------------------
 
 ## normal javac
-JAVAC = javac
-JC_FLAGS = 
-
-## with jikes
-#JAVAC = jikes
-#JC_FLAGS = -O +E
+JAVAC = $(JAVA_HOME)/bin/javac
+JC_FLAGS += -target 1.5 -source 1.5
 
 # installation directories   --------------------------------------------------
 
@@ -130,21 +126,21 @@ RPM_BASE        = `pwd`/$(BUILDDIR)/
 world : jar build-native
 
 jar: build-java
-	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
+	cd $(BUILDDIR) ; $(JAVA_HOME)/bin/jar -cvmf ../$(MF_STUB) ../$(JAR) *
 
 $(JAR):
-	cd $(BUILDDIR) ; jar -cvmf ../$(MF_STUB) ../$(JAR) *
+	cd $(BUILDDIR) ; $(JAVA_HOME)/bin/jar -cvmf ../$(MF_STUB) ../$(JAR) *
 
 build-java: $(BUILDDIR)
 	cd src ; $(MAKE) JAVAC="$(JAVAC)" JC_FLAGS="$(JC_FLAGS)" \
 		OS_FLAVOR=$(OS_FLAVOR) java
 
-build-native: 
+build-native:
 	cd src; $(MAKE) T_LIBS="$(T_LIBS)" JAVAINCLUDE="$(JAVAINCLUDE)" \
 		        OS_FLAVOR=$(OS_FLAVOR) JAVANATINC="$(JAVANATINC)" native
 
 apidoc: $(APIDIR)
-	javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
+	$(JAVA_HOME)/bin/javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
                 -doctitle $(DTITLE) -footer $(DFOOTER) -header $(DHEADER) \
                 -bottom $(DBOTTOM) \
                 -version -author org.gnu.readline test
@@ -174,7 +170,7 @@ $(APIDIR):
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
 
-$(METADIR): 
+$(METADIR):
 	mkdir $(METADIR)
 
 rpm: src-dist
@@ -185,7 +181,7 @@ rpm: src-dist
 	rpm --define _topdir$(RPM_BASE) -ba $(RPM_BASE)/SPECS/libreadline-java.spec
 
 test: $(JAR) build-native
-	java  -Djava.library.path=. -jar $(JAR) src/test/tinputrc $(ARGS)
+	$(JAVA_HOME)/bin/java  -Djava.library.path=. -jar $(JAR) src/test/tinputrc $(ARGS)
 
 clean:
 	$(MAKE) -C src/native clean

@@ -49,10 +49,7 @@ COMPILATION
 ===========
 
 Compilation should be no problem. Try "make". You should set the
-variable JAVA_HOME (or edit the makefile). Also, if you don't use jikes,
-you should change the variables JAVAC and JAVAC_OPT in the makefile. A better
-alternative is to install jikes, it will speed up your development by
-a factor of 2-3.
+variable JAVA_HOME (or edit the makefile). 
 JAVAC and JAVAC_OPT can also be set in the environment or from the
 make commandline.
 

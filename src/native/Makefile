@@ -27,12 +27,12 @@
 # $Revision$
 #
 
-export 
+export
 
 .PHONY: org_gnu_readline_Readline.o
 
 ifndef CC
-  CC=cc
+	CC=cc
 endif
 
 # OS-specific stuff   ---------------------------------------------------------
@@ -45,22 +45,22 @@ CFLAGS   = -fpic -DPOSIX
 LD_FLAGS = -shared
 
 INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
-LIBPATH           = -L/usr/lib/termcap 
+LIBPATH           = -L/usr/lib/termcap
 
 JavaReadline_LIBS = -lreadline -ltermcap -lhistory
 JavaEditline_LIBS = -ledit -ltermcap
-JavaGetline_LIBS  = 
+JavaGetline_LIBS  =
 endif
 
 ifeq (CYGWIN,$(OS_FLAVOR))
 OBJ_EXT := o
-LIB_PRE := 
+LIB_PRE :=
 LIB_EXT := dll
 CFLAGS  := -DWIN32
 LD_FLAGS = -shared
 
 INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
-LIBPATH           = -L/usr/lib/termcap 
+LIBPATH           = -L/usr/lib/termcap
 
 JavaReadline_LIBS = -lreadline -ltermcap -lhistory
 JavaEditline_LIBS = -ledit -ltermcap
@@ -69,7 +69,7 @@ endif
 
 ifeq (MSWIN,$(OS_FLAVOR))
 OBJ_EXT := obj
-LIB_PRE := 
+LIB_PRE :=
 LIB_EXT := dll
 CFLAGS  := -DWIN32
 LD_FLAGS = -LD
@@ -80,7 +80,7 @@ LIBPATH           =
 LIB               = "c:/Programme/DevStudio/VC/lib"
 JavaReadline_LIBS =
 JavaEditline_LIBS =
-JavaGetline_LIBS  = 
+JavaGetline_LIBS  =
 endif
 
 ifeq (MAC,$(OS_FLAVOR))
@@ -95,7 +95,7 @@ LIBPATH           = -L/usr/lib -L/sw/lib
 
 JavaReadline_LIBS = -lreadline -ltermcap -lhistory
 JavaEditline_LIBS = -ledit -ltermcap
-JavaGetline_LIBS  = 
+JavaGetline_LIBS  =
 endif
 
 # some constants, you should not need to change these variables   -------------
@@ -109,7 +109,7 @@ endif
 
 # targets, finally ;-)   ------------------------------------------------------
 
-all: $(T_LIBS) 
+all: $(T_LIBS)
 
 lib: $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT)
 
@@ -137,12 +137,12 @@ getline.$(OBJ_EXT): getline.c
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) -c getline.c
 
 org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h \
-	                                      org_gnu_readline_Readline.c
+																				org_gnu_readline_Readline.c
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
-	                                   -c org_gnu_readline_Readline.c
+																		 -c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
-	javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
+	$(JAVA_HOME)/bin/javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
 
 clean:
