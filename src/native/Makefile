@@ -31,11 +31,13 @@ export
 
 .PHONY: org_gnu_readline_Readline.o
 
+ifndef CC
+  CC=cc
+endif
+
 # OS-specific stuff   ---------------------------------------------------------
 
-
 ifeq (LINUX,$(OS_FLAVOR))
-CC      := gcc
 OBJ_EXT := o
 LIB_PRE := lib
 LIB_EXT := so
@@ -51,7 +53,6 @@ JavaGetline_LIBS  =
 endif
 
 ifeq (CYGWIN,$(OS_FLAVOR))
-CC      := gcc
 OBJ_EXT := o
 LIB_PRE := 
 LIB_EXT := dll
@@ -67,7 +68,6 @@ JavaGetline_LIBS  = -ltermcap
 endif
 
 ifeq (MSWIN,$(OS_FLAVOR))
-CC      := cl
 OBJ_EXT := obj
 LIB_PRE := 
 LIB_EXT := dll
@@ -84,7 +84,6 @@ JavaGetline_LIBS  =
 endif
 
 ifeq (MAC,$(OS_FLAVOR))
-CC      := gcc
 OBJ_EXT := o
 LIB_PRE := lib
 LIB_EXT := jnilib
