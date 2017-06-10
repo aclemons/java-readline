@@ -332,7 +332,7 @@ JNIEXPORT void JNICALL Java_org_gnu_readline_Readline_initReadlineImpl
    if (is_copy == JNI_TRUE)
     (*env)->ReleaseStringUTFChars(env, jappName, appName);
 #ifdef JavaReadline
-   rl_catch_signals = 0; // don't install signal handlers in JNI code.
+   rl_catch_signals = 0; /* don't install signal handlers in JNI code. */
 #endif
 #ifndef JavaGetline
    rl_initialize();
@@ -864,8 +864,8 @@ JNIEXPORT jstring JNICALL
   /* set new value */
 
   value = globalStringInternals[(int) jindex];
-  // TODO: currently a memory-leak, but otherwise it crashes
-  // free(*value);
+  /* TODO: currently a memory-leak, but otherwise it crashes */
+  /* free(*value); */
   *value = strdup(buffer);
   
   /* return old value */
