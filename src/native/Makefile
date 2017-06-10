@@ -114,13 +114,13 @@ all: $(T_LIBS)
 lib: $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT)
 
 JavaReadline:
-	make TG=$@ lib
+	$(MAKE) TG=$@ lib
 
 JavaEditline:
-	make TG=$@ lib
+	$(MAKE) TG=$@ lib
 
 JavaGetline:
-	make TG=$@ lib
+	$(MAKE) TG=$@ lib
 
 $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT): $(OBJECTS)
 ifeq (MSWIN,$(OS_FLAVOR))
