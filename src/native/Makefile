@@ -31,9 +31,7 @@ export
 
 .PHONY: org_gnu_readline_Readline.o
 
-ifndef CC
-	CC=cc
-endif
+CC ?= gcc
 
 # OS-specific stuff   ---------------------------------------------------------
 
@@ -41,7 +39,7 @@ ifeq (LINUX,$(OS_FLAVOR))
 OBJ_EXT := o
 LIB_PRE := lib
 LIB_EXT := so
-CFLAGS   = -fpic -DPOSIX
+NATIVE_CFLAGS := -fpic -DPOSIX $(CFLAGS)
 LD_FLAGS = -shared
 
 INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
@@ -56,7 +54,7 @@ ifeq (CYGWIN,$(OS_FLAVOR))
 OBJ_EXT := o
 LIB_PRE :=
 LIB_EXT := dll
-CFLAGS  := -DWIN32
+NATIVE_CFLAGS := -DWIN32 $(CFLAGS)
 LD_FLAGS = -shared
 
 INCLUDES          = -I $(JAVAINCLUDE) -I $(JAVANATINC)
@@ -71,7 +69,7 @@ ifeq (MSWIN,$(OS_FLAVOR))
 OBJ_EXT := obj
 LIB_PRE :=
 LIB_EXT := dll
-CFLAGS  := -DWIN32
+NATIVE_CFLAGS := -DWIN32 $(CFLAGS)
 LD_FLAGS = -LD
 
 INCLUDES          = -I "c:/Programme/DevStudio/VC/include" \
@@ -87,7 +85,7 @@ ifeq (MAC,$(OS_FLAVOR))
 OBJ_EXT := o
 LIB_PRE := lib
 LIB_EXT := jnilib
-CFLAGS   = -fPIC -DPOSIX
+NATIVE_CFLAGS := -fPIC -DPOSIX $(CFLAGS)
 LD_FLAGS = -dynamiclib -framework JavaVM
 
 INCLUDES          = -I/sw/include -I $(JAVAINCLUDE) -I $(JAVANATINC)
@@ -134,11 +132,11 @@ ifeq (MAC,$(OS_FLAVOR))
 endif
 
 getline.$(OBJ_EXT): getline.c
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) -c getline.c
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(NATIVE_CFLAGS) -D$(TG) -c getline.c
 
 org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h \
 																				org_gnu_readline_Readline.c
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -D$(TG) \
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(NATIVE_CFLAGS) -D$(TG) \
 																		 -c org_gnu_readline_Readline.c
 
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
