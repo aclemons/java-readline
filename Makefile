@@ -117,6 +117,7 @@ MF_STUB   = etc/manifest.stub
 
 VERSION         = `cat VERSION`
 JAR             = $(TARGET).jar
+JAVADOC_FLAGS  = $(shell if $(JAVA_HOME)/bin/javadoc -X 2> /dev/null | grep doclint > /dev/null 2>&1 ; then printf '%s\n' '-Xdoclint:none' ; fi)
 APIDIR          = ./api
 BUILDDIR        = ./build
 RPM_BASE        = `pwd`/$(BUILDDIR)/
@@ -143,7 +144,7 @@ apidoc: $(APIDIR)
 	$(JAVA_HOME)/bin/javadoc -sourcepath src -d $(APIDIR) -windowtitle $(WTITLE) \
                 -doctitle $(DTITLE) -footer $(DFOOTER) -header $(DHEADER) \
                 -bottom $(DBOTTOM) \
-                -version -author org.gnu.readline test
+                -version -author org.gnu.readline $(JAVADOC_FLAGS) test
 
 install: jar build-native apidoc
 	install -D $(JAR)    $(DESTDIR)$(JAVALIBDIR)/$(JAR)
