@@ -1,9 +1,9 @@
-This is my "port" of GNU-Readline to Java. Actually, it is a crude wrapper 
+This is my "port" of GNU-Readline to Java. Actually, it is a crude wrapper
 using the Java Native Interface (JNI).
 
 Starting from version 0.6, alternative libraries are supported. Currently
 only Editline is implemented, but adding support for other implementations
-should be easy. 
+should be easy.
 From 0.6 on, JavaReadline also has a fallback solution (System.in) for
 platforms without Readline or Editline support, making your programs portable
 again.
@@ -49,7 +49,7 @@ COMPILATION
 ===========
 
 Compilation should be no problem. Try "make". You should set the
-variable JAVA_HOME (or edit the makefile). 
+variable JAVA_HOME (or edit the makefile).
 JAVAC and JAVAC_OPT can also be set in the environment or from the
 make commandline.
 
@@ -91,10 +91,8 @@ Thanks to Ben Burton, Debian-packages for JavaReadline are available!
 SUPPORT
 =======
 
-If you think you found a bug or want to contribute some code please drop 
-me a note.
+If you think you found a bug or want to contribute some code, please open
+an issue or send a pull request.
 
-Bernhard Bablok
-mail@bablokb.de
-http://www.bablokb.de
-
+This software was originally written by Bernhard Bablok, who has retired
+from maintaining. It is now maintained by Andrew Clemons.
