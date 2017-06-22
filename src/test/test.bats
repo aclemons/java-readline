@@ -22,16 +22,30 @@
 unset LC_CTYPE
 export LANG=en_US.UTF-8
 
+# not perfect, but good enough for running through the makefile with travis or
+# directly from emacs
+if [ -f test.bats ] ; then
+  # running from test folder
+  LIBDIR="$(pwd)/../.."
+  LIBJAVAREADLINE="$LIBDIR/libJavaReadline.so"
+  LIBJAVAEDITLINE="$LIBDIR/libJavaEditline.so"
+else
+  # running from root
+  LIBDIR="$(pwd)"
+  LIBJAVAREADLINE="$LIBDIR/libJavaReadline.so"
+  LIBJAVAEDITLINE="$LIBDIR/libJavaEditline.so"
+fi
+
 setup() {
   rm -f .bats_rlhistory
 }
 
 is_readline() {
-  [ -f libJavaReadline.so ]
+  [ -f "$LIBJAVAREADLINE" ]
 }
 
 is_editline() {
-  [ -f libJavaEditline.so ]
+  [ -f "$LIBJAVAEDITLINE" ]
 }
 
 has_iso8859_15() {
@@ -43,11 +57,11 @@ supports_utf8() {
 }
 
 assert_var() {
-  [ "$(LANG="$4" "$JAVA_HOME/bin/java" -Dfile.encoding="$5" -Djava.library.path=. -cp libreadline-java.jar test.BatsTestVar "$1" "$2" "$3" | sed -n '1p')" = "$3" ]
+  [ "$(LANG="$4" "$JAVA_HOME/bin/java" -Dfile.encoding="$5" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestVar "$1" "$2" "$3" | sed -n '1p')" = "$3" ]
 }
 
 assert_prompt() {
-  [ "$(printf "\n" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path=. -cp libreadline-java.jar test.BatsTestReader "$1" "$2" | sed -n '1p')" = "$2" ]
+  [ "$(printf "\n" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestReader "$1" "$2" | sed -n '1p')" = "$2" ]
 }
 
 assert_input() {
@@ -57,7 +71,7 @@ assert_input() {
     sed_arg="1p" # editline does not echo the prompt without a tty
   fi
 
-  [ "$(printf "%s\n" "$2" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path=. -cp libreadline-java.jar test.BatsTestReader "$1" | sed -n "$sed_arg")" = "$2" ]
+  [ "$(printf "%s\n" "$2" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestReader "$1" | sed -n "$sed_arg")" = "$2" ]
 }
 
 assert_history() {
@@ -67,7 +81,7 @@ assert_history() {
     sed_arg="2p" # editline does not echo the prompt without a tty
   fi
 
-  output="$(printf "%s\n" "$2" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path=. -cp libreadline-java.jar test.BatsTestReader "$1" | sed -n "$sed_arg")"
+  output="$(printf "%s\n" "$2" | LANG="$3" "$JAVA_HOME/bin/java" -Dfile.encoding="$4" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestReader "$1" | sed -n "$sed_arg")"
 
   [ "$output" = "$2" ]
 }
