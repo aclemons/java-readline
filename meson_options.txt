@@ -1,0 +1,15 @@
+option('enable-readline',
+  type: 'boolean',
+  value: false,
+  description: 'Enable readline support')
+option('enable-editline',
+  type: 'boolean',
+  value: false,
+  description: 'Enable editline support')
+option('enable-getline',
+  type: 'boolean',
+  value: true,
+  description: 'Enable getline support')
+option('JAVA_HOME',
+  type: 'string',
+  description: 'JAVA_HOME to use for javac, javah, jar')

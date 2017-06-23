@@ -1,9 +1,5 @@
 #**************************************************************************
-#* Makefile for libJavaReadline.so -- load library for JNI wrapper
-#* of GNU readline
-#*
-#* Copyright (c) 1987-1998 Free Software Foundation, Inc.
-#* Java Wrapper Copyright (c) 1998-2001 by Bernhard Bablok (mail@bablokb.de)
+#* Java Wrapper Copyright (c) 2017 by Andrew Clemons (andrew.clemons@gmail.com)
 #*
 #* This program is free software; you can redistribute it and/or modify
 #* it under the terms of the GNU Library General Public License as published
@@ -20,11 +16,11 @@
 #* the Free Software Foundation Inc., 51 Franklin Street, Fifth Floor,
 #* Boston, MA  02110-1301 USA
 #***************************************************************************
-#
-# $Author$
-# $Revision$
-#
 
-include $(SRCROOT)/mkrules.inc
+project('libjava-readline', ['c'],
+        version : '0.8.2',
+       )
 
-$(PACKDIR)/ReadlineTest.class: $(PACKDIR)/TestCompleter.class $(PACKDIR)/BatsTestReader.class $(PACKDIR)/BatsTestVar.class
+add_project_arguments(['-fpic', '-DPOSIX'], language: 'c')
+
+subdir('src')

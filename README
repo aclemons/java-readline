@@ -48,25 +48,15 @@ compiles natively on Windows.
 COMPILATION
 ===========
 
-Compilation should be no problem. Try "make". You should set the
-variable JAVA_HOME (or edit the makefile).
-JAVAC and JAVAC_OPT can also be set in the environment or from the
-make commandline.
+Compilation requires meson and ninja. Assuming you already have it installed,
+compilation should be as simple as:
 
-If you want Editline support, use "make T_LIBS=JavaEditline". Getline support
-is selected with "make T_LIBS=JavaGetline".
+meson build -Denable-readline=true -DJAVA_HOME="$JAVA_HOME"
+cd build
+ninja all
 
-Getline support is also available for (native) WIN32. To build it from
-source, you need the cygwin-environment (only necessary because we still
-use GNU-make) and a native C-compiler. All necessary variables are configured
-in the toplevel Makefile. Before running make, set the WIN32-variable to MSC:
-
-> WIN32=MSC make
-
-A ready-to-use DLL is in the contrib/win32 directory. Since this feature
-is experimental, your feedback is appreciated. If you figure out how to
-link JavaReadline with cygwin, please let me know as well (some stubs
-are already built into the makefiles).
+If you want Editline support, add "-Denable-editline=true". Getline support
+is built by default. It can be disabled with "-Denable-getline=false".
 
 
 INSTALLATION
@@ -77,9 +67,9 @@ the directory where you put libJava*.so to LD_LIBARY_PATH. Also, add
 java_readline.jar to your CLASSPATH. After building the jar and the shared
 library, you can run a program with something like:
 
-LD_LIBRARY_PATH=/usr/lib java -cp java_readline.jar org.foo.bar.MyClass
+LD_LIBRARY_PATH=/usr/lib64 java -cp java_readline.jar org.foo.bar.MyClass
 
-assuming that you put libJava*.so into /usr/lib.
+assuming that you put libJava*.so into /usr/lib64.
 
 
 DEBIAN

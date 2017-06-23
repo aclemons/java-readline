@@ -26,12 +26,22 @@ export LANG=en_US.UTF-8
 # directly from emacs
 if [ -f test.bats ] ; then
   # running from test folder
-  LIBDIR="$(pwd)/../.."
+  if [ -f "$(pwd)/../../libJavaReadline.so" ] ; then
+    LIBDIR="$(pwd)/../.."
+  elif [ -f "$(pwd)/../../build/src/native/libJavaReadline.so" ] ; then
+    LIBDIR="$(pwd)/../../build/src/native"
+  fi
+
   LIBJAVAREADLINE="$LIBDIR/libJavaReadline.so"
   LIBJAVAEDITLINE="$LIBDIR/libJavaEditline.so"
 else
   # running from root
-  LIBDIR="$(pwd)"
+  if [ -f "$(pwd)/libJavaReadline.so" ] ; then
+    LIBDIR="$(pwd)"
+  elif [ -f "$(pwd)/build/src/native/libJavaReadline.so" ] ; then
+    LIBDIR="$(pwd)/build/src/native"
+  fi
+
   LIBJAVAREADLINE="$LIBDIR/libJavaReadline.so"
   LIBJAVAEDITLINE="$LIBDIR/libJavaEditline.so"
 fi
