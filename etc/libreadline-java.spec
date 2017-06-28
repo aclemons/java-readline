@@ -1,4 +1,4 @@
-%define version 0.8.1
+%define version 0.8.2
 
 Summary: java wrapper for the GNU-readline library
 Copyright: GNU Lesser General Public License
