@@ -42,6 +42,7 @@ public final class BatsTestReader {
 
     Readline.load(library);
     Readline.initReadline("BatsTestReader");
+    Readline.setCompleter(new TestCompleter());
 
     final String prompt;
     if (args.length > 1) {

@@ -82,6 +82,10 @@ assert_history() {
   [ "$output" = "$2" ]
 }
 
+assert_completion() {
+  [ "$(printf "L\t\n" | LANG="$2" "$JAVA_HOME/bin/java" -Dfile.encoding="$3" -Djava.library.path="$LIBDIR" -cp "$LIBDIR/libreadline-java.jar" test.BatsTestReader "$1" | sed -n '1p')" = "bats> Linux " ]
+}
+
 @test "GnuReadline handles simple ascii prompt" {
   if ! is_readline ; then
     skip "java-readline not built with GnuReadline support"
@@ -350,4 +354,12 @@ assert_history() {
   fi
 
   assert_var "Editline" "RL_LINE_BUFFER" "$(printf "%b" "Hello World\xf0\x9f\x8c\x8b")" "en_US.UTF-8" "UTF-8"
+}
+
+@test "GnuReadline handles simple ascii completion" {
+  if ! is_readline ; then
+    skip "java-readline not built with GnuReadline support"
+  fi
+
+  assert_completion "GnuReadline" "en_US.UTF-8" "UTF-8"
 }

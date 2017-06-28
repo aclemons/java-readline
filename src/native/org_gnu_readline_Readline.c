@@ -578,12 +578,12 @@ const char *java_completer(char *text, int state) {
   completion = (*jniEnv)->CallObjectMethod(jniEnv, jniObject,
 					   jniMethodId, jtext, state);
   if (!completion) {
-    return ((const char *)NULL);
+    return ((const char *) NULL);
   }
 
   line = fromjstring(jniEnv, completion);
 
-  return line;
+  return strdup(line);
 }
 #endif
   
