@@ -24,37 +24,6 @@
     </properties>
     <build>
         <plugins>
-            <!-- Source and binary tarballs from src/assembly/* files. -->
-            <!--plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${project.groupId}.jgirs.${project.name}</mainClass>
-                        </manifest>
-                        <!- -manifestEntries>
-                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
-                        </manifestEntries- ->
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <descriptors>
-                        <descriptor>src/assembly/target.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>exec-bin</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -70,20 +39,7 @@
                 <version>2.6</version>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <mainClass>org.gnu.Readline</mainClass>
-                        </manifest>
                     </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <configuration>
-                    <show>package</show> <!-- Document also package private classes -->
-                    <aggregate>true</aggregate>
                 </configuration>
             </plugin>
         </plugins>
