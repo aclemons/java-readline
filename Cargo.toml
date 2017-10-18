@@ -1,0 +1,20 @@
+[package]
+name = "JavaReadline"
+version = "0.1.0"
+authors = ["Andrew Clemons <andrew.clemons@gmail.com>"]
+build = "build.rs"
+
+[lib]
+crate_type = ["dylib"]
+
+[features]
+default = ["readline"]
+
+readline = []
+getline = []
+editline = []
+
+[dependencies]
+libc = "0.2"
+jni = "0.7"
+errno = "0.2"

@@ -121,7 +121,7 @@ public class ReadlineTest {
     
     // set test completer
 
-    Readline.setCompleter(new TestCompleter());
+    //    Readline.setCompleter(new TestCompleter());
 
     // main input loop
 

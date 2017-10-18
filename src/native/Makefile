@@ -100,7 +100,6 @@ endif
 
 ROOTDIR=../..
 BUILDDIR=$(ROOTDIR)/build
-OBJECTS := org_gnu_readline_Readline.$(OBJ_EXT)
 ifeq ($(TG),JavaGetline)
 OBJECTS += getline.$(OBJ_EXT)
 endif
@@ -121,21 +120,13 @@ JavaGetline:
 	$(MAKE) TG=$@ lib
 
 $(ROOTDIR)/$(LIB_PRE)$(TG).$(LIB_EXT): $(OBJECTS)
-ifeq (MSWIN,$(OS_FLAVOR))
-	$(CC) $(LD_FLAGS) $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -Fe$@
-endif
-ifeq (LINUX,$(OS_FLAVOR))
-	$(CC) $(LD_FLAGS) $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
-endif
-ifeq (MAC,$(OS_FLAVOR))
-	$(CC) $(LD_FLAGS) $(OBJECTS) $(LIBPATH) $($(TG)_LIBS) -o $@
-endif
+	cargo build
+	cp ../../target/debug/$(LIB_PRE)$(TG).$(LIB_EXT) ../../
 
 getline.$(OBJ_EXT): getline.c
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(NATIVE_CFLAGS) -D$(TG) -c getline.c
 
-org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h \
-																				org_gnu_readline_Readline.c
+org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(NATIVE_CFLAGS) -D$(TG) \
 																		 -c org_gnu_readline_Readline.c
 
@@ -144,5 +135,6 @@ org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	touch org_gnu_readline_Readline.h
 
 clean:
-	-rm -f org_gnu_readline_Readline.h \
-		org_gnu_readline_Readline.$(OBJ_EXT) getline.$(OBJ_EXT)
+	-rm -fr org_gnu_readline_Readline.h \
+		org_gnu_readline_Readline.$(OBJ_EXT) getline.$(OBJ_EXT) \
+		../../target
