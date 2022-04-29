@@ -33,6 +33,12 @@ export
 
 T_LIBS    = JavaReadline
 
+# find jdk location   ---------------------------------------------------------
+
+ifndef JAVA_HOME
+$(error JAVA_HOME is not set)
+endif
+
 # java-compiler flavor   ------------------------------------------------------
 
 ## normal javac
