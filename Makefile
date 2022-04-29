@@ -37,7 +37,20 @@ T_LIBS    = JavaReadline
 
 ## normal javac
 JAVAC = $(JAVA_HOME)/bin/javac
+
+ifeq (,$(realpath $(JAVAC)))
+$(error javac not found: $(JAVAC))
+endif
+
+JAVAC_VERSION_MAJOR := $(shell $(JAVAC) -version | cut -d " " -f2 | cut -d . -f1)
+JAVAC_VERSION_GE_10 := $(shell test $(JAVAC_VERSION_MAJOR) -ge 10 && echo true)
+ifeq ($(JAVAC_VERSION_GE_10),true)
+JC_FLAGS += -target 10 -source 10
+USE_JAVAH = false
+else
 JC_FLAGS += -target 1.5 -source 1.5
+USE_JAVAH = true
+endif
 
 # installation directories   --------------------------------------------------
 
