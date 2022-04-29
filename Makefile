@@ -36,6 +36,12 @@ T_LIBS    = JavaReadline
 # find jdk location   ---------------------------------------------------------
 
 ifndef JAVA_HOME
+#JAVA_HOME := $(shell java -XshowSettings:properties -version 2>&1 >/dev/null | grep java.home | sed -e 's/[^=]*=\s*//')
+JAVA_HOME := $(realpath $(dir $(realpath $(shell which javac)))/..)
+$(shell echo "Guessed JAVA_HOME is \"$(JAVA_HOME)\"" >&2)
+endif
+
+ifndef JAVA_HOME
 $(error JAVA_HOME is not set)
 endif
 
