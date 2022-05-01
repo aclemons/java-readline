@@ -139,9 +139,11 @@ org_gnu_readline_Readline.$(OBJ_EXT): org_gnu_readline_Readline.h \
 	$(CC) $(INCLUDES) $(CPPFLAGS) $(NATIVE_CFLAGS) -D$(TG) \
 																		 -c org_gnu_readline_Readline.c
 
+ifeq ($(USE_JAVAH),true)
 org_gnu_readline_Readline.h: $(BUILDDIR)/org/gnu/readline/Readline.class
 	$(JAVA_HOME)/bin/javah -classpath $(BUILDDIR) -jni org.gnu.readline.Readline
 	touch org_gnu_readline_Readline.h
+endif
 
 clean:
 	-rm -f org_gnu_readline_Readline.h \
