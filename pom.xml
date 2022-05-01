@@ -44,10 +44,42 @@
   <url>https://github.com/aclemons/java-readline</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.5</maven.compiler.source>
-    <maven.compiler.target>1.5</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+  <profiles>
+    <profile>
+      <id>jdk16</id>
+      <activation>
+        <jdk>1.6</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>1.7</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk18</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+      </properties>
+    </profile>
+  </profiles>
   <build>
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <plugins>

@@ -36,7 +36,6 @@ T_LIBS    = JavaReadline
 # find jdk location   ---------------------------------------------------------
 
 ifndef JAVA_HOME
-#JAVA_HOME := $(shell java -XshowSettings:properties -version 2>&1 >/dev/null | grep java.home | sed -e 's/[^=]*=\s*//')
 JAVA_HOME := $(realpath $(dir $(realpath $(shell which javac)))/..)
 $(shell echo "Guessed JAVA_HOME is \"$(JAVA_HOME)\"" >&2)
 endif
@@ -54,11 +53,23 @@ ifeq (,$(realpath $(JAVAC)))
 $(error javac not found: $(JAVAC))
 endif
 
-JAVAC_VERSION_MAJOR := $(shell $(JAVAC) -version | cut -d " " -f2 | cut -d . -f1)
+JAVAC_VERSION := $(shell java -version 2>&1 | sed -n 1p | cut -d' ' -f3 | sed -e 's/"//g')
+JAVAC_VERSION_MAJOR := $(shell echo "$(JAVAC_VERSION)" | cut -d . -f1)
+JAVAC_VERSION_MINOR := $(shell echo "$(JAVAC_VERSION)" | cut -d . -f2)
 JAVAC_VERSION_GE_10 := $(shell test $(JAVAC_VERSION_MAJOR) -ge 10 && echo true)
+JAVAC_VERSION_EQ_1 := $(shell test $(JAVAC_VERSION_MAJOR) -eq 1 && echo true)
+JAVAC_VERSION_MINOR_GE_8 := $(shell test $(JAVAC_VERSION_MINOR) -ge 8 && echo true)
 ifeq ($(JAVAC_VERSION_GE_10),true)
-JC_FLAGS += -target 10 -source 10
+JC_FLAGS += -target 1.8 -source 1.8
 USE_JAVAH = false
+else ifeq ($(JAVAC_VERSION_EQ_1),true)
+ifeq ($(JAVAC_VERSION_MINOR_GE_8),true)
+JC_FLAGS += -target 1.6 -source 1.6
+USE_JAVAH = true
+else
+JC_FLAGS += -target 1.5 -source 1.5
+USE_JAVAH = true
+endif
 else
 JC_FLAGS += -target 1.5 -source 1.5
 USE_JAVAH = true
