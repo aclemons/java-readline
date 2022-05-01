@@ -4,7 +4,7 @@
   <groupId>org.gnu</groupId>
   <artifactId>libreadline-java</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.3</version>
+  <version>0.8.4-SNAPSHOT</version>
   <name>java-readline</name>
   <issueManagement>
     <url>https://github.com/aclemons/java-readline/issues</url>
