@@ -4,6 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "maven-enforcer-plugin"
+        versions: [">=3.1"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
