@@ -8,7 +8,7 @@ updates:
     open-pull-requests-limit: 25
     ignore:
       - dependency-name: "org.apache.maven.plugins:maven-enforcer-plugin"
-        versions: [">=3.1"]
+        versions: [">=3.0.0"]
       - dependency-name: "org.apache.maven.plugins:maven-clean-plugin"
         versions: [">=3.2"]
       - dependency-name: "org.apache.maven.plugins:maven-compiler-plugin"
@@ -18,6 +18,10 @@ updates:
       - dependency-name: "org.apache.maven.plugins:maven-site-plugin"
         versions: [">=3.12.0"]
       - dependency-name: "org.apache.maven.plugins:maven-project-info-reports-plugin"
+        versions: [">=3.3.0", "3.2.2"]
+      - dependency-name: "org.apache.maven.plugins:maven-install-plugin"
+        versions: [">=3.1.0"]
+      - dependency-name: "org.apache.maven.plugins:maven-jar-plugin"
         versions: [">=3.3.0"]
       - dependency-name: "org.codehaus.mojo:animal-sniffer-maven-plugin"
         versions: [">=1.18"]
