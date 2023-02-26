@@ -1,14 +1,26 @@
+---
 version: 2
 updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 25
     ignore:
       - dependency-name: "org.apache.maven.plugins:maven-enforcer-plugin"
         versions: [">=3.1"]
       - dependency-name: "org.apache.maven.plugins:maven-clean-plugin"
         versions: [">=3.2"]
+      - dependency-name: "org.apache.maven.plugins:maven-compiler-plugin"
+        versions: [">=3.9.0"]
+      - dependency-name: "org.apache.maven.plugins:maven-resources-plugin"
+        versions: [">=3.3.0"]
+      - dependency-name: "org.apache.maven.plugins:maven-site-plugin"
+        versions: [">=3.12.0"]
+      - dependency-name: "org.apache.maven.plugins:maven-project-info-reports-plugin"
+        versions: [">=3.3.0"]
+      - dependency-name: "org.codehaus.mojo:animal-sniffer-maven-plugin"
+        versions: [">=1.18"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
