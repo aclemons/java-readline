@@ -21,6 +21,8 @@ updates:
         versions: [">=3.3.0", "3.2.2"]
       - dependency-name: "org.apache.maven.plugins:maven-install-plugin"
         versions: [">=3.1.0"]
+      - dependency-name: "org.apache.maven.plugins:maven-surefire-plugin"
+        versions: [">=3.0.0"]
       - dependency-name: "org.apache.maven.plugins:maven-jar-plugin"
         versions: [">=3.3.0"]
       - dependency-name: "org.codehaus.mojo:animal-sniffer-maven-plugin"
