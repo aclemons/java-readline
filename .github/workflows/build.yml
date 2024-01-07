@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        jdk: ['7', '8', '11', '17']
+        jdk: ['7', '8', '11', '17', '21']
         cc: [gcc, clang]
     steps:
     - name: Check out code
