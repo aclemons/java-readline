@@ -307,8 +307,8 @@ static size_t bufLength = 0;
 
 static char*  word_break_buffer = NULL;
 
-static char* fromjstring(const JNIEnv *env, jstring value);
-static jstring tojstring(const JNIEnv *env, const char* value);
+static char* fromjstring(JNIEnv *env, jstring value);
+static jstring tojstring(JNIEnv *env, const char* value);
 
 static int   allocBuffer(size_t n);
 
@@ -776,7 +776,7 @@ JNIEXPORT jstring JNICALL
 /* Convert jstring to c-string                                                */
 /* -------------------------------------------------------------------------- */
 
-char* fromjstring(const JNIEnv *env, jstring value) {
+char* fromjstring(JNIEnv *env, jstring value) {
   const jclass jstringClass = (*env)->GetObjectClass(env, value);
   const jmethodID getBytesMethodId = (*env)->GetMethodID(env, jstringClass, "getBytes", "()[B");
 
@@ -790,7 +790,7 @@ char* fromjstring(const JNIEnv *env, jstring value) {
     return NULL;
   }
 
-  const jbyte* bytes = (*env)->GetByteArrayElements(env, jstringJBytes, NULL);
+  jbyte* bytes = (*env)->GetByteArrayElements(env, jstringJBytes, NULL);
 
   if (2*length > bufLength) {
     if (allocBuffer(2*length)) {
@@ -822,7 +822,7 @@ char* fromjstring(const JNIEnv *env, jstring value) {
 /* Convert c-string to j-string                                               */
 /* -------------------------------------------------------------------------- */
 
-jstring tojstring(const JNIEnv *env, const char* value) {
+jstring tojstring(JNIEnv *env, const char* value) {
   const jclass jstringClass = (*env)->FindClass(env,"java/lang/String");
   const jmethodID constructorMethodId = (*env)->GetMethodID(env, jstringClass, "<init>", "([B)V");
 
