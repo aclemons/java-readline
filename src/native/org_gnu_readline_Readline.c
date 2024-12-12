@@ -790,7 +790,7 @@ char* fromjstring(JNIEnv *const env, jstring value) {
     return NULL;
   }
 
-  const jbyte* bytes = (*env)->GetByteArrayElements(env, jstringJBytes, NULL);
+  jbyte *const bytes = (*env)->GetByteArrayElements(env, jstringJBytes, NULL);
 
   if (2*length > bufLength) {
     if (allocBuffer(2*length)) {
