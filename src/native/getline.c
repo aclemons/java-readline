@@ -982,7 +982,7 @@ char *p;
 /* makes a copy of the string */
 {
     char *s = 0;
-    int   len = strlen(p);
+    size_t   len = strlen(p);
     char *nl = strchr(p, '\n');
 
     if (nl) {
