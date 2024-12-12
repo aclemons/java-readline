@@ -130,18 +130,18 @@ static int* globalIntegerInternals[] = {
 };
 
 static char** globalStringInternals[] = {
- /* const */ &rl_library_version,
- /* const */ &rl_readline_name,
+ /* const */ (char**) &rl_library_version,
+ /* const */ (char**) &rl_readline_name,
  &rl_prompt,
  &rl_line_buffer,
- /* const */ &rl_terminal_name,
+ /* const */ (char**) &rl_terminal_name,
  &rl_executing_macro,
- /* const */ &rl_basic_word_break_characters,
- /* const */ &rl_completer_word_break_characters,
- /* const */ &rl_completer_quote_characters,
- /* const */ &rl_basic_quote_characters,
- /* const */ &rl_filename_quote_characters,
- /* const */ &rl_special_prefixes,
+ /* const */ (char**) &rl_basic_word_break_characters,
+ /* const */ (char**) &rl_completer_word_break_characters,
+ /* const */ (char**) &rl_completer_quote_characters,
+ /* const */ (char**) &rl_basic_quote_characters,
+ /* const */ (char**) &rl_filename_quote_characters,
+ /* const */ (char**) &rl_special_prefixes,
 
  &history_word_delimiters,
  &history_no_expand_chars,
@@ -198,18 +198,18 @@ static int* globalIntegerInternals[] = {
 };
 
 static char** globalStringInternals[] = {
-  /* const */ &rl_library_version,
-  /* const */ &rl_readline_name,
+  /* const */ (char**) &rl_library_version,
+  /* const */ (char**) &rl_readline_name,
   &undefinedInternalString, /*  &rl_prompt, */
   &rl_line_buffer,
   &undefinedInternalString, /* const  &rl_terminal_name, */
   &undefinedInternalString, /*  &rl_executing_macro, */
-  /* const */ &rl_basic_word_break_characters,
-  /* const */ &rl_completer_word_break_characters,
-  /* const */ &rl_completer_quote_characters,
+  /* const */ (char**) &rl_basic_word_break_characters,
+  /* const */ (char**) &rl_completer_word_break_characters,
+  /* const */ (char**) &rl_completer_quote_characters,
   &undefinedInternalString, /* const  &rl_basic_quote_characters, */
   &undefinedInternalString, /* const  &rl_filename_quote_characters, */
-  /* const */ &rl_special_prefixes,
+  /* const */ (char**) &rl_special_prefixes,
 
   &undefinedInternalString, /*  &history_word_delimiters, */
   &undefinedInternalString, /*  &history_no_expand_chars, */
