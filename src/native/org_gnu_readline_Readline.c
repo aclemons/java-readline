@@ -95,7 +95,12 @@ extern char* gl_buf;
 static int* globalIntegerInternals[] = {
   &rl_readline_version,
   &rl_gnu_readline_p,
+#if (RL_READLINE_VERSION >= 0x0700)
+  /* in readline 7.0, this field was changed to a long int. It's still holds a 32bit value so we'll cast. */
+  (int *) &rl_readline_state,
+#else
   &rl_readline_state,
+#endif
   &rl_editing_mode,
   &rl_insert_mode,
   &rl_point,
