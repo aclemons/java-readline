@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
          sudo apt-get update -qq
-         sudo apt-get install -qq bats libedit-dev libedit2
+         sudo apt-get install -qq bats libedit-dev libedit2 libreadline-dev
     - name: Build
       run: |
          make clean bats T_LIBS="JavaEditline JavaReadline JavaGetline" CC=${{ matrix.cc }}
