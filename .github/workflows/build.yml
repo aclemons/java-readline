@@ -8,7 +8,7 @@ jobs:
   build:
     strategy:
       matrix:
-        jdk: ['7', '8', '11', '17', '21']
+        jdk: ['8', '11', '17', '21']
         cc: [gcc, clang]
         os: [ubuntu-20.04, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
