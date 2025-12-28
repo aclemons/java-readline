@@ -1,3 +1,6 @@
+Unreleased:
+  - test with jdk24 (Andrew)
+
 For release 0.8.4:
   - test with jdk21 (Andrew)
   - resolve build failures with gcc14 (Andrew)
